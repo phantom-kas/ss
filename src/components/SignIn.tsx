@@ -6,6 +6,12 @@ import { Label } from './ui/label';
 import { Card } from './ui/card';
 import type { Page } from '../App';
 import logo from 'figma:asset/872c19024a848c86be2cfb9320e9ce2d33228284.png';
+import { Link } from '@tanstack/react-router';
+import axios from 'axios';
+import { showApiError } from '@/lib/error';
+import api from '@/lib/axios';
+import { toast } from 'sonner';
+import { LoadingButton } from './Elements/Button';
 
 interface SignInProps {
   navigateTo: (page: Page) => void;
@@ -13,19 +19,30 @@ interface SignInProps {
 }
 
 export function SignIn({ navigateTo, onSignIn }: SignInProps) {
+  const [loading , setLoading ]  = useState(false)
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSignIn();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+   try{
+    setLoading(true)
+    await api.post('/auth/login',formData)
+    toast.success('Login success')
+   }catch(e){
+    showApiError(e)
+   }finally{
+    setLoading(false)
+   }
   };
 
+
+  
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-emerald-50/30 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div onSubmit={handleSubmit} className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-emerald-50/30 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       {/* Back Button */}
       <button
         onClick={() => navigateTo('landing')}
@@ -111,16 +128,16 @@ export function SignIn({ navigateTo, onSignIn }: SignInProps) {
             </div>
           </div>
 
-          <Button type="submit" className="w-full bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 h-9 text-sm">
+          <LoadingButton isLoading={loading} type="submit" className="w-full bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 h-9 text-sm">
             Sign In
-          </Button>
+          </LoadingButton>
         </form>
 
         <p className="text-center text-slate-600 dark:text-slate-400 text-sm mt-4">
           Don't have an account?{' '}
-          <button onClick={() => navigateTo('signup')} className="text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+          <Link to="/signup" onClick={() => navigateTo('signup')} className="text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
             Sign up
-          </button>
+          </Link>
         </p>
       </Card>
     </div>

@@ -14,7 +14,7 @@ import { PaymentMethods } from './components/PaymentMethods';
 import { Notifications } from './components/Notifications';
 import { Support } from './components/Support';
 import { AppLayout } from './components/AppLayout';
-
+import { Toaster } from "@/components/ui/sonner"
 // Root route
 const rootRoute = createRootRoute({
   component: () => <div id="app-root"><RouterOutlet /></div>,
@@ -352,5 +352,31 @@ declare module '@tanstack/react-router' {
 }
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return <><RouterProvider router={router} />
+  <AppToaster/></> 
+}
+
+
+export function AppToaster() {
+  return (
+    <Toaster
+      richColors
+      // duration={400000}
+      toastOptions={{
+        classNames: {
+          toast: "rounded-2xl shadow-md px-4 py-2 text-sm",
+          title: "font-bold text-base",
+          description: "text-sm text-muted-foreground",
+          success: "bg-green-600 text-white border border-green-700",
+          error: "bg-red-600 text-white border border-red-700",
+          info: "bg-blue-600 text-white border border-blue-700",
+          warning: "bg-yellow-500 text-black border border-yellow-600",
+          icon: "mr-2",
+          closeButton: "text-white hover:text-gray-200",
+        },
+        // duration: 400000,
+        closeButton: true,
+      }}
+    />
+  );
 }
