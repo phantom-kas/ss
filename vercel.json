@@ -8,7 +8,7 @@
     }
   ],
   "routes": [
-    { "src": "/(.*\\..*)", "dest": "/$1" },      // Serve static files normally
-    { "src": "/(.*)", "dest": "/index.html" }    // All other routes go to index.html
+    { "src": "/(.*\\..*)", "dest": "/$1" },     
+    { "src": "/(.*)", "dest": "/index.html" } 
   ]
 }
