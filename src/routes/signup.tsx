@@ -11,7 +11,7 @@ function SignUpRoute() {
   const handleSignUp = () => {
     // Set authentication state and navigate to onboarding
     localStorage.setItem('isAuthenticated', 'true');
-    navigate({ to: '/onboarding' });
+    navigate({ to: '/signin' });
   };
 
   return <SignUp onSignUp={handleSignUp} />;

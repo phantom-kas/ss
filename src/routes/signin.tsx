@@ -10,7 +10,7 @@ function SignInRoute() {
 
   const handleSignIn = () => {
     // Set authentication state and navigate to onboarding
-    localStorage.setItem('isAuthenticated', 'true');
+    // localStorage.setItem('isAuthenticated', 'true');
     navigate({ to: '/onboarding' });
   };
 

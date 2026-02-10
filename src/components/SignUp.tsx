@@ -10,7 +10,8 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import { LoadingButton } from './Elements/Button';
 import api from '@/lib/axios';
-import { showApiError } from '@/lib/error';
+// import { showApiError } from '@/lib/error';
+import { showError } from '@/lib/error';
 import { Link } from '@tanstack/react-router';
 // import {toast} from ''
 interface SignUpProps {
@@ -61,7 +62,8 @@ export function SignUp({ navigateTo, onSignUp }: SignUpProps) {
    await api.post('/auth/register',{first_name:formData.firstName,last_name:formData.lastName,email:formData.email ,password:formData.password}).then(res=>{
 
     toast.success('Signup successful')
-    }).finally(()=>{setLoading(false)}).catch(e=>{showApiError(e)})
+    onSignUp()
+    }).finally(()=>{setLoading(false)}).catch(e=>{showError(e)})
     // toast.success('success')
     // onSignUp();
   };

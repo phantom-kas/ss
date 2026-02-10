@@ -2,7 +2,7 @@
       "name": "StableSend UI",
       "version": "0.1.0",
       "private": true,
-       "type": "module",
+      "type": "module",
       "dependencies": {
             "@radix-ui/react-accordion": "^1.2.3",
             "@radix-ui/react-alert-dialog": "^1.1.6",
@@ -31,7 +31,8 @@
             "@radix-ui/react-toggle-group": "^1.1.2",
             "@radix-ui/react-tooltip": "^1.1.8",
             "@tailwindcss/vite": "^4.1.18",
-            "@tanstack/react-router": "*",
+            "@tanstack/react-router": "^1.159.5",
+            "@tanstack/router": "^0.0.1-beta.53",
             "axios": "^1.13.4",
             "class-variance-authority": "^0.7.1",
             "clsx": "^2.1.1",
@@ -51,9 +52,12 @@
             "sonner": "^2.0.7",
             "tailwind-merge": "^3.4.0",
             "tailwindcss": "^4.1.18",
-            "vaul": "^1.1.2"
+            "vaul": "^1.1.2",
+            "zustand": "^5.0.11"
       },
       "devDependencies": {
+            "@tanstack/router-cli": "^1.159.4",
+            "@tanstack/router-generator": "^1.159.4",
             "@types/node": "^20.10.0",
             "@types/react": "^19.2.10",
             "@vitejs/plugin-react-swc": "^3.10.2",
@@ -62,6 +66,8 @@
       },
       "scripts": {
             "dev": "vite",
-            "build": "vite build"
+            "build": "vite build",
+            "router:gen": "tanstack-router-cli generate",
+            "router:watch": "tanstack-router-cli generate --watch"
       }
 }

@@ -1,0 +1,6 @@
+export default {
+  routesDirectory: "./src/routes",
+  generatedRouteTree: "./src/routeTree.gen.ts",
+  routeFileIgnorePrefix: "_",
+  quoteStyle: "single",
+};

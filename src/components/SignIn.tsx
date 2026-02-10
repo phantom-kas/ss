@@ -8,7 +8,7 @@ import type { Page } from '../App';
 import logo from 'figma:asset/872c19024a848c86be2cfb9320e9ce2d33228284.png';
 import { Link } from '@tanstack/react-router';
 import axios from 'axios';
-import { showApiError } from '@/lib/error';
+import { showError } from '@/lib/error';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
 import { LoadingButton } from './Elements/Button';
@@ -27,13 +27,14 @@ export function SignIn({ navigateTo, onSignIn }: SignInProps) {
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
+    // alert('s')
     e.preventDefault()
    try{
     setLoading(true)
     await api.post('/auth/login',formData)
     toast.success('Login success')
    }catch(e){
-    showApiError(e)
+    showError(e)
    }finally{
     setLoading(false)
    }
@@ -42,7 +43,7 @@ export function SignIn({ navigateTo, onSignIn }: SignInProps) {
 
   
   return (
-    <div onSubmit={handleSubmit} className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-emerald-50/30 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-emerald-50/30 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       {/* Back Button */}
       <button
         onClick={() => navigateTo('landing')}
