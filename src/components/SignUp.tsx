@@ -58,12 +58,16 @@ export function SignUp({ navigateTo, onSignUp }: SignUpProps) {
   const handleSubmit =async (e: React.SubmitEvent) => {
     e.preventDefault();
   setLoading(true)
-
-   await api.post('/auth/register',{first_name:formData.firstName,last_name:formData.lastName,email:formData.email ,password:formData.password}).then(res=>{
+    try{
+   await api.post('/auth/register',{first_name:formData.firstName,last_name:formData.lastName,email:formData.email ,password:formData.password})
 
     toast.success('Signup successful')
     onSignUp()
-    }).finally(()=>{setLoading(false)}).catch(e=>{showError(e)})
+    }catch(e){
+      showError(e)
+    }finally{
+      setLoading(false)
+    }
     // toast.success('success')
     // onSignUp();
   };
