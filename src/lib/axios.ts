@@ -5,7 +5,7 @@ import axios from 'axios';
 // ---------------------------
 const api = axios.create({
   // baseURL: import.meta.env.VITE_API_BASE_URL,
-  baseURL: 'http://localhost:3000',
+  baseURL: 'http://localhost:3001',
   // baseURL: 'https://gc-rest-api.onrender.com',
   withCredentials: true, // send cookies if using them
 });
@@ -52,13 +52,13 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
- if(originalRequest.url  == '/auth/login'){
-  // alert('ss')
-       return Promise.reject(error);
-     }
+    if (originalRequest.url == '/auth/login') {
+      // alert('ss')
+      return Promise.reject(error);
+    }
     // Only try refresh once per request
     if (error.response?.status === 401 && !originalRequest._retry) {
-    
+
       if (isRefreshing) {
         // Queue request until refresh finishes
         return new Promise((resolve, reject) => {

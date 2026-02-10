@@ -39,7 +39,7 @@ export function LandingPage() {
         backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 10px, #059669 10px, #059669 20px),
                          repeating-linear-gradient(-45deg, transparent, transparent 10px, #1e40af 10px, #1e40af 20px)`
       }}></div>
-      
+
       {/* Navigation */}
       <nav className="bg-white/90 backdrop-blur-md border-b-4 border-emerald-500 sticky top-0 z-50 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,7 +53,7 @@ export function LandingPage() {
                 <span className="px-3 py-1 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs rounded-full font-bold shadow-lg">🇬🇭 Ghana</span>
               </div>
             </div>
-            
+
             <div className="hidden md:flex items-center gap-6">
               <a href="#how-it-works" className="text-sm text-slate-700 hover:text-blue-700 transition-colors font-semibold">How It Works</a>
               <a href="#pricing" className="text-sm text-slate-700 hover:text-blue-700 transition-colors font-semibold">Pricing</a>
@@ -61,15 +61,15 @@ export function LandingPage() {
             </div>
 
             <div className="hidden md:flex items-center gap-3">
-              <Button 
-                variant="outline" 
-                onClick={() => navigate({ to: '/signin' })} 
+              <Button
+                variant="outline"
+                onClick={() => navigate({ to: '/signin' })}
                 className="border-2 border-blue-700 text-blue-700 hover:bg-blue-50 font-semibold"
               >
                 Log In
               </Button>
-              <Button 
-                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold shadow-xl shadow-blue-500/50" 
+              <Button
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold shadow-xl shadow-blue-500/50"
                 onClick={() => navigate({ to: '/signup' })}
               >
                 Get Started
@@ -77,7 +77,7 @@ export function LandingPage() {
               </Button>
             </div>
 
-            <button 
+            <button
               className="md:hidden text-blue-700"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
@@ -107,7 +107,7 @@ export function LandingPage() {
         <div className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-br from-blue-400/30 to-emerald-400/30 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-10 left-10 w-96 h-96 bg-gradient-to-tr from-emerald-400/30 to-blue-400/30 rounded-full blur-3xl" style={{ animationDelay: '1.5s' }}></div>
         <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-to-br from-amber-400/20 to-emerald-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div>
@@ -115,14 +115,14 @@ export function LandingPage() {
                 <Sparkles className="w-4 h-4 text-emerald-600" />
                 <span className="text-sm font-bold">Trusted by 50,000+ families across Africa</span>
               </div>
-              
+
               <h1 className="text-4xl md:text-5xl lg:text-6xl text-slate-900 mb-6 leading-[1.1] font-black">
                 Send Money Home to
                 <span className="block mt-2 bg-gradient-to-r from-blue-600 via-emerald-500 to-blue-600 bg-clip-text text-transparent"> Ghana 🇬🇭</span>
               </h1>
-              
+
               <p className="text-xl text-slate-700 mb-8 leading-relaxed font-medium">
-                Lightning-fast transfers ⚡ Unbeatable rates 💰 Zero hidden fees ✨ 
+                Lightning-fast transfers ⚡ Unbeatable rates 💰 Zero hidden fees ✨
                 <span className="block mt-2 text-emerald-700">Your family gets more, you pay less!</span>
               </p>
 
@@ -150,17 +150,17 @@ export function LandingPage() {
               </div>
 
               <div className="flex flex-wrap gap-4 mb-6">
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold shadow-2xl shadow-blue-500/60 px-8 text-lg" 
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold shadow-2xl shadow-blue-500/60 px-8 text-lg"
                   onClick={() => navigate({ to: '/signup' })}
                 >
                   Send Money Now
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
+                <Button
+                  size="lg"
+                  variant="outline"
                   className="border-4 border-emerald-500 text-emerald-700 hover:bg-emerald-50 font-bold"
                 >
                   <PlayCircle className="w-5 h-5 mr-2" />
@@ -183,7 +183,7 @@ export function LandingPage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Interactive Calculator Widget with StableSend Colors */}
             <div className="relative">
               <div className="absolute -inset-6 bg-gradient-to-r from-blue-500 via-emerald-500 to-blue-500 rounded-3xl blur-2xl opacity-30 animate-pulse"></div>
@@ -248,8 +248,8 @@ export function LandingPage() {
                     </div>
                   </div>
 
-                  <Button 
-                    size="lg" 
+                  <Button
+                    size="lg"
                     className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-black shadow-2xl text-lg"
                     onClick={() => Link.to('signup')}
                   >
@@ -561,9 +561,9 @@ export function LandingPage() {
                 </div>
               </div>
 
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-black shadow-2xl px-8" 
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-black shadow-2xl px-8"
                 onClick={() => Link.to('signup')}
               >
                 Get Started Now
@@ -593,7 +593,7 @@ export function LandingPage() {
               Questions? We've got answers 💬
             </h2>
           </div>
-          
+
           <div className="space-y-3">
             {[
               {
@@ -619,11 +619,10 @@ export function LandingPage() {
                   className="w-full p-5 text-left flex items-center justify-between bg-gradient-to-r from-white to-blue-50 hover:from-blue-50 hover:to-emerald-50 transition-colors"
                 >
                   <h3 className="font-black text-slate-900 pr-4 text-base">{faq.question}</h3>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
-                    openFaq === index 
-                      ? 'bg-gradient-to-r from-blue-600 to-emerald-600' 
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${openFaq === index
+                      ? 'bg-gradient-to-r from-blue-600 to-emerald-600'
                       : 'bg-gradient-to-r from-slate-200 to-slate-300'
-                  }`}>
+                    }`}>
                     {openFaq === index ? (
                       <Minus className="w-5 h-5 text-white" />
                     ) : (
@@ -649,7 +648,7 @@ export function LandingPage() {
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-400/30 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         </div>
-        
+
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="mb-6">
             <span className="text-6xl">🏠</span>
@@ -661,17 +660,17 @@ export function LandingPage() {
             Join 50,000+ families making every cedi count 💚
           </p>
           <div className="flex flex-wrap gap-4 justify-center mb-8">
-            <Button 
-              size="lg" 
-              className="bg-white text-blue-700 hover:bg-blue-50 px-10 py-6 text-xl font-black shadow-2xl hover:scale-105 transition-transform" 
+            <Button
+              size="lg"
+              className="bg-white text-blue-700 hover:bg-blue-50 px-10 py-6 text-xl font-black shadow-2xl hover:scale-105 transition-transform"
               onClick={() => Link.to('signup')}
             >
               Send Money Now
               <ArrowRight className="w-6 h-6 ml-2" />
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
+            <Button
+              size="lg"
+              variant="outline"
               className="border-4 border-white text-white hover:bg-white/20 px-10 py-6 text-xl font-black backdrop-blur-sm"
             >
               <PlayCircle className="w-6 h-6 mr-2" />
@@ -721,7 +720,7 @@ export function LandingPage() {
                 </a>
               </div>
             </div>
-            
+
             <div>
               <h3 className="text-white font-black mb-4">Product</h3>
               <ul className="space-y-3 text-sm">
