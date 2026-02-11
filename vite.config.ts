@@ -3,12 +3,17 @@
   import react from '@vitejs/plugin-react-swc';
   import path from 'path';
   import { fileURLToPath } from 'node:url'
+import tsconfigPaths from 'vite-tsconfig-paths'
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
+// import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import { dirname } from 'node:path'
 import tailwindcss from '@tailwindcss/vite'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
   export default defineConfig({
-    plugins: [react(),  tailwindcss()],
+    plugins: [react(), tsconfigPaths(), tanstackRouter({
+      // optional config here
+    }), tailwindcss()],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {

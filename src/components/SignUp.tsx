@@ -13,6 +13,7 @@ import api from '@/lib/axios';
 // import { showApiError } from '@/lib/error';
 import { showError } from '@/lib/error';
 import { Link } from '@tanstack/react-router';
+import { GoogleSignInButton } from './Elements/GoogleAuth';
 // import {toast} from ''
 interface SignUpProps {
   navigateTo: (page: Page) => void;
@@ -92,7 +93,7 @@ export function SignUp({ navigateTo, onSignUp }: SignUpProps) {
         </div>
 
         {/* Social Sign Up */}
-        <div className="mb-3">
+        {/* <div className="mb-3">
           <Button variant="outline" className="w-full h-9 text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600" type="button">
             <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -102,8 +103,8 @@ export function SignUp({ navigateTo, onSignUp }: SignUpProps) {
             </svg>
             Continue with Google
           </Button>
-        </div>
-
+        </div> */}
+ <GoogleSignInButton/>
         <div className="relative mb-3">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-slate-200 dark:border-slate-700"></div>

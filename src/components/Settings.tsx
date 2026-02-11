@@ -77,7 +77,7 @@ export function Settings({ navigateTo, onLogout }: SettingsProps) {
   );
 
   return (
-    <AppLayout navigateTo={navigateTo} currentPage="settings" onLogout={onLogout}>
+    <>
       <main className="max-w-2xl mx-auto px-3 sm:px-6 py-3 sm:py-6 pb-20 md:pb-6">
         {/* Profile Header */}
         <Card className="p-4 mb-4 dark:bg-slate-800 dark:border-slate-700">
@@ -223,6 +223,6 @@ export function Settings({ navigateTo, onLogout }: SettingsProps) {
           <p className="text-xs text-slate-400 dark:text-slate-500">© 2024 StableSend. All rights reserved.</p>
         </div>
       </main>
-    </AppLayout>
+    </>
   );
 }

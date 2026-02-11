@@ -67,7 +67,7 @@ export function Dashboard({ navigateTo, onLogout }: DashboardProps) {
   ];
 
   return (
-    <AppLayout navigateTo={navigateTo} currentPage="dashboard" onLogout={onLogout}>
+    
       <main className="max-w-2xl mx-auto px-3 sm:px-6 py-3 sm:py-6 pb-20 md:pb-6">
         {/* Header */}
         <div className="mb-3 sm:mb-4">
@@ -177,6 +177,6 @@ export function Dashboard({ navigateTo, onLogout }: DashboardProps) {
           </div>
         </Card>
       </main>
-    </AppLayout>
+
   );
 }

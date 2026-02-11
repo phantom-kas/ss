@@ -6,12 +6,14 @@ import { Label } from './ui/label';
 import { Card } from './ui/card';
 import type { Page } from '../App';
 import logo from 'figma:asset/872c19024a848c86be2cfb9320e9ce2d33228284.png';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import axios from 'axios';
 import { showError } from '@/lib/error';
-import api from '@/lib/axios';
+import api, { setAccessToken } from '@/lib/axios';
 import { toast } from 'sonner';
 import { LoadingButton } from './Elements/Button';
+import { useAuthStore } from '@/stores/auth';
+import { GoogleSignInButton } from './Elements/GoogleAuth';
 
 interface SignInProps {
   navigateTo: (page: Page) => void;
@@ -25,13 +27,28 @@ export function SignIn({ navigateTo, onSignIn }: SignInProps) {
     email: '',
     password: ''
   });
+const login = useAuthStore((state) => state.login);
+  const navigate = useNavigate();
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     // alert('s')
     e.preventDefault()
    try{
     setLoading(true)
-    await api.post('/auth/login',formData)
+    const res  = await api.post('/auth/login',formData)
+
+  const { data, accessToken } = res.data;
+
+    //  alert('d')
+      login(data, accessToken);
+setAccessToken(accessToken)
+      if(!data.done_onboarding){
+        navigate({ to: '/onboarding' });
+return
+      }
+        navigate({ to: '/dashboard' });
+
     toast.success('Login success')
    }catch(e){
     showError(e)
@@ -43,7 +60,7 @@ export function SignIn({ navigateTo, onSignIn }: SignInProps) {
 
   
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-emerald-50/30 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-linear-to-br from-blue-50 via-emerald-50/30 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       {/* Back Button */}
       <button
         onClick={() => navigateTo('landing')}
@@ -62,7 +79,7 @@ export function SignIn({ navigateTo, onSignIn }: SignInProps) {
         </div>
 
         {/* Social Sign In */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <Button variant="outline" className="w-full h-9 text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600" type="button">
             <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -72,7 +89,9 @@ export function SignIn({ navigateTo, onSignIn }: SignInProps) {
             </svg>
             Continue with Google
           </Button>
-        </div>
+        </div> */}
+
+        <GoogleSignInButton/>
 
         <div className="relative mb-4">
           <div className="absolute inset-0 flex items-center">

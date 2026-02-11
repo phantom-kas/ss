@@ -132,9 +132,7 @@ export function SendMoney({ navigateTo, onLogout, prefilledRecipient }: SendMone
     { id: 'bank', name: 'Bank Account', desc: 'Chase •••• 1234', icon: Building },
   ];
 
-  return (
-    <AppLayout navigateTo={navigateTo} currentPage="send" onLogout={onLogout}>
-      {/* Progress Bar */}
+  return (<>
       <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
         <div className="max-w-2xl mx-auto px-3 sm:px-6 py-3">
           <div className="flex items-center justify-center gap-2 sm:gap-3">
@@ -896,6 +894,6 @@ export function SendMoney({ navigateTo, onLogout, prefilledRecipient }: SendMone
           </div>
         </DialogContent>
       </Dialog>
-    </AppLayout>
+    </>
   );
 }

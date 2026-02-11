@@ -163,7 +163,7 @@ export function Transactions({ navigateTo, onLogout }: TransactionsProps) {
   };
 
   return (
-    <AppLayout navigateTo={navigateTo} currentPage="transactions" onLogout={onLogout}>
+    <>
       <main className="max-w-2xl mx-auto px-3 sm:px-6 py-3 sm:py-6 pb-20 md:pb-6">
         {/* Header - Mobile Optimized */}
         <div className="mb-4 sm:mb-6">
@@ -268,6 +268,6 @@ export function Transactions({ navigateTo, onLogout }: TransactionsProps) {
           </div>
         )}
       </main>
-    </AppLayout>
+    </>
   );
 }

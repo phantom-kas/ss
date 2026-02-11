@@ -72,7 +72,7 @@ export function Support({ navigateTo, onLogout }: SupportProps) {
   ];
 
   return (
-    <AppLayout navigateTo={navigateTo} currentPage="support" onLogout={onLogout}>
+    <>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20 md:pb-6">
         <div className="text-center mb-8">
           <h1 className="text-slate-900 dark:text-white mb-3 text-xl">How can we help you?</h1>
@@ -217,6 +217,6 @@ export function Support({ navigateTo, onLogout }: SupportProps) {
           </div>
         </div>
       </main>
-    </AppLayout>
+    </>
   );
 }

@@ -29,7 +29,10 @@ function VerifyEmail (){
 
         if (user.isLoggedIn()) {
           navigate({ to: "/dashboard" });
+
+          return
         }
+          navigate({ to: "/signin" });
       }).catch(e=>showError(e));
   }, []);
 

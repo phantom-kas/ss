@@ -126,9 +126,7 @@ export function Notifications({ navigateTo, onLogout }: NotificationsProps) {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  return (
-    <AppLayout navigateTo={navigateTo} currentPage="dashboard" onLogout={onLogout}>
-      <main className="max-w-2xl mx-auto px-3 sm:px-6 py-3 sm:py-6 pb-20 md:pb-6">
+  return ( <main className="max-w-2xl mx-auto px-3 sm:px-6 py-3 sm:py-6 pb-20 md:pb-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4 sm:mb-6">
           <button
@@ -274,6 +272,6 @@ export function Notifications({ navigateTo, onLogout }: NotificationsProps) {
           </div>
         </Card>
       </main>
-    </AppLayout>
+
   );
 }

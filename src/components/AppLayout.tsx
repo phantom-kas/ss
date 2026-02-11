@@ -11,15 +11,16 @@ import {
 } from './ui/dropdown-menu';
 import type { Page } from '../App';
 import logo from 'figma:asset/872c19024a848c86be2cfb9320e9ce2d33228284.png';
+import { Link } from '@tanstack/react-router';
 
 interface AppLayoutProps {
   children: ReactNode;
-  navigateTo: (page: Page) => void;
+  navigateTo?: (page: Page) => void;
   currentPage: Page;
-  onLogout: () => void;
+  onLogout?: () => void;
 }
 
-export function AppLayout({ children, navigateTo, currentPage, onLogout }: AppLayoutProps) {
+export function AppLayout({ children, navigateTo=()=>{} , currentPage, onLogout=()=>{} }: AppLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -66,10 +67,10 @@ export function AppLayout({ children, navigateTo, currentPage, onLogout }: AppLa
   };
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', page: 'dashboard' as Page },
-    { id: 'send', label: 'Send Money', page: 'send' as Page },
-    { id: 'transactions', label: 'Transactions', page: 'transactions' as Page },
-    { id: 'support', label: 'Support', page: 'support' as Page },
+    { id: 'dashboard', label: 'Dashboard',to: '/dashboard', page: 'dashboard' as Page },
+    { id: 'send', label: 'Send Money',to: '/send', page: 'send' as Page },
+    { id: 'transactions', label: 'Transactions',to: '/transactions', page: 'transactions' as Page },
+    { id: 'support', label: 'Support',to: '/support', page: 'support' as Page },
   ];
 
   return (
@@ -84,17 +85,19 @@ export function AppLayout({ children, navigateTo, currentPage, onLogout }: AppLa
             
             <div className="flex items-center gap-6">
               {navItems.map((item) => (
-                <button
+                <Link to={item.to}
                   key={item.id}
-                  onClick={() => navigateTo(item.page)}
+                  // onClick={() => navigateTo(item.page)}
+                  activeProps={{className:'text-blue-600! dark:text-blue-400! font-medium! '}}
                   className={`text-sm transition-colors ${
-                    currentPage === item.page
-                      ? 'text-blue-600 dark:text-blue-400 font-medium'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                    // currentPage === item.page
+                    //   ? 'text-blue-600 dark:text-blue-400 font-medium'
+                    //   :
+                       'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   {item.label}
-                </button>
+                </Link>
               ))}
             </div>
 

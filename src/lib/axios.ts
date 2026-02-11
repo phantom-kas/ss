@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { useAuthStore } from '@/stores/auth';
 // ---------------------------
 // Config
 // ---------------------------
@@ -37,9 +37,12 @@ const processQueue = (error: any, token: string | null = null) => {
 // ---------------------------
 api.interceptors.request.use(
   (config) => {
-    if (accessToken) {
-      config.headers!['Authorization'] = `Bearer ${accessToken}`;
+   const token = useAuthStore.getState().token;
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
   (error) => Promise.reject(error)
@@ -77,13 +80,14 @@ api.interceptors.response.use(
       try {
         // Call refresh endpoint
         const { data } = await axios.post(
-          `${api.defaults.baseURL}/auth/refresh`,
+          `${api.defaults.baseURL}/auth/generate_new_access_token`,
           {},
           { withCredentials: true } // send refresh token if in cookie
         );
 
-        accessToken = data.accessToken;
-
+        accessToken = data.data.accessToken;
+        // alert(accessToken)
+          useAuthStore.setState({ token: accessToken });
         // Update original request
         originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
         processQueue(null, accessToken);
@@ -107,5 +111,7 @@ export default api;
 // Optional helper to set token manually (after login)
 // ---------------------------
 export const setAccessToken = (token: string) => {
+  // alert(token)
   accessToken = token;
+  // api.defaults.headers['Authorization'] = `Bearer ${accessToken}`
 };

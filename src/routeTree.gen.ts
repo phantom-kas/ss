@@ -10,9 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
+import { Route as TestRouteImport } from './routes/test'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as GoogleSuccessRouteImport } from './routes/google-success'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthSupportRouteImport } from './routes/_auth/support'
@@ -31,6 +33,11 @@ const VerifyEmailRoute = VerifyEmailRouteImport.update({
   path: '/verify-email',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TestRoute = TestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -44,6 +51,11 @@ const SigninRoute = SigninRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GoogleSuccessRoute = GoogleSuccessRouteImport.update({
+  id: '/google-success',
+  path: '/google-success',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -111,9 +123,11 @@ const AuthSettingsPaymentMethodsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/google-success': typeof GoogleSuccessRoute
   '/onboarding': typeof OnboardingRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/test': typeof TestRoute
   '/verify-email': typeof VerifyEmailRoute
   '/dashboard': typeof AuthDashboardRoute
   '/notifications': typeof AuthNotificationsRoute
@@ -128,9 +142,11 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/google-success': typeof GoogleSuccessRoute
   '/onboarding': typeof OnboardingRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/test': typeof TestRoute
   '/verify-email': typeof VerifyEmailRoute
   '/dashboard': typeof AuthDashboardRoute
   '/notifications': typeof AuthNotificationsRoute
@@ -147,9 +163,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
+  '/google-success': typeof GoogleSuccessRoute
   '/onboarding': typeof OnboardingRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/test': typeof TestRoute
   '/verify-email': typeof VerifyEmailRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
   '/_auth/notifications': typeof AuthNotificationsRoute
@@ -166,9 +184,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/google-success'
     | '/onboarding'
     | '/signin'
     | '/signup'
+    | '/test'
     | '/verify-email'
     | '/dashboard'
     | '/notifications'
@@ -183,9 +203,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/google-success'
     | '/onboarding'
     | '/signin'
     | '/signup'
+    | '/test'
     | '/verify-email'
     | '/dashboard'
     | '/notifications'
@@ -201,9 +223,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_auth'
+    | '/google-success'
     | '/onboarding'
     | '/signin'
     | '/signup'
+    | '/test'
     | '/verify-email'
     | '/_auth/dashboard'
     | '/_auth/notifications'
@@ -220,9 +244,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
+  GoogleSuccessRoute: typeof GoogleSuccessRoute
   OnboardingRoute: typeof OnboardingRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
+  TestRoute: typeof TestRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
 }
 
@@ -233,6 +259,13 @@ declare module '@tanstack/react-router' {
       path: '/verify-email'
       fullPath: '/verify-email'
       preLoaderRoute: typeof VerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test': {
+      id: '/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -254,6 +287,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/google-success': {
+      id: '/google-success'
+      path: '/google-success'
+      fullPath: '/google-success'
+      preLoaderRoute: typeof GoogleSuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth': {
@@ -374,9 +414,11 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
+  GoogleSuccessRoute: GoogleSuccessRoute,
   OnboardingRoute: OnboardingRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
+  TestRoute: TestRoute,
   VerifyEmailRoute: VerifyEmailRoute,
 }
 export const routeTree = rootRouteImport

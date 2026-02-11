@@ -3,6 +3,13 @@ import { Star, Upload, CreditCard, DollarSign, CheckCircle2, ArrowRight } from '
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Progress } from './ui/progress';
+import { cn } from '@/lib/utils';
+import { LoadingButton } from './Elements/Button';
+import api from '@/lib/axios';
+import { showError } from '@/lib/error';
+import { useAuthStore } from '@/stores/auth';
+import { useNavigate } from '@tanstack/react-router';
+import { toast } from 'sonner';
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -11,8 +18,11 @@ interface OnboardingProps {
 export function Onboarding({ onComplete }: OnboardingProps) {
   const [step, setStep] = useState(1);
   const totalSteps = 3;
+  const [loading , setLoading] = useState(false)
   const progress = (step / totalSteps) * 100;
-
+const navigate = useNavigate()
+  const [selectedCurrency , setSelectedCurrency ] = useState<string>()
+const updateUser = useAuthStore((s) => s.updateUser);
   const nextStep = () => {
     if (step < totalSteps) {
       setStep(step + 1);
@@ -20,7 +30,24 @@ export function Onboarding({ onComplete }: OnboardingProps) {
       onComplete();
     }
   };
-
+const finished =async (currency:string)=>{
+  setLoading(true)
+  try{
+    const res =await api.post('auth/finish-oonboarding',{
+  selected_currency: currency,
+})
+ updateUser({
+    done_onboarding: true,
+    selected_currency: currency,
+  });
+  toast.success('Onboarding success')
+navigate({to:'/dashboard'})
+  }catch(e){
+    showError(e)
+  }finally{
+    setLoading(false)
+  }
+}
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-emerald-50/30 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <Card className="w-full max-w-2xl p-6 shadow-xl dark:bg-slate-800 dark:border-slate-700">
@@ -48,15 +75,15 @@ export function Onboarding({ onComplete }: OnboardingProps) {
               <h3 className="text-slate-900 dark:text-white mb-3 text-sm font-medium">You'll need:</h3>
               <div className="space-y-2 text-left">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span className="text-slate-700 dark:text-slate-300 text-sm">Government-issued ID</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span className="text-slate-700 dark:text-slate-300 text-sm">Proof of address</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span className="text-slate-700 dark:text-slate-300 text-sm">A selfie for verification</span>
                 </div>
               </div>
@@ -68,7 +95,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
           </div>
         )}
 
-        {step === 2 && (
+        {/* {step === 2 && (
           <div className="text-center">
             <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <CreditCard className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
@@ -112,9 +139,9 @@ export function Onboarding({ onComplete }: OnboardingProps) {
               </Button>
             </div>
           </div>
-        )}
+        )} */}
 
-        {step === 3 && (
+        {step === 2 && (
           <div className="text-center">
             <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <DollarSign className="w-8 h-8 text-purple-600 dark:text-purple-400" />
@@ -125,12 +152,12 @@ export function Onboarding({ onComplete }: OnboardingProps) {
             </p>
             <div className="grid grid-cols-2 gap-3 mb-6">
               {[
-                { code: 'USD', name: 'US Dollar', symbol: '$' },
-                { code: 'EUR', name: 'Euro', symbol: '€' },
-                { code: 'GBP', name: 'British Pound', symbol: '£' },
-                { code: 'USDT', name: 'Tether', symbol: '₮' },
+                { code: 'USD', name: 'US Dollar', symbol: '$' , disabled:false},
+                { code: 'EUR', name: 'Euro', symbol: '€' , disabled:true},
+                { code: 'GBP', name: 'British Pound', symbol: '£' , disabled:true},
+                { code: 'GHS', name: 'Ghana Cedi', symbol: '₵' , disabled:false},
               ].map((currency) => (
-                <Card key={currency.code} className="p-3 hover:shadow-md transition-shadow cursor-pointer border-2 border-transparent hover:border-blue-700 dark:bg-slate-700 dark:border-slate-600 dark:hover:border-blue-500">
+                <Card onClick={()=>{setSelectedCurrency(currency.code);finished(currency.code)}} key={currency.code} className={cn("p-3 hover:shadow-md transition-shadow cursor-pointer border-2 border-transparent hover:border-blue-700 dark:bg-slate-700 dark:border-slate-600 dark:hover:border-blue-500 ", currency.disabled ? ' opacity-60 pointer-events-none':'')}>
                   <div className="text-center">
                     <div className="text-2xl text-slate-900 dark:text-white mb-1">{currency.symbol}</div>
                     <p className="text-slate-900 dark:text-white text-sm font-medium">{currency.code}</p>
@@ -140,12 +167,12 @@ export function Onboarding({ onComplete }: OnboardingProps) {
               ))}
             </div>
             <div className="flex gap-3">
-              <Button variant="outline" onClick={() => setStep(step - 1)} className="h-9 dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600">
+              {/* <Button variant="outline" onClick={() => setStep(step - 1)} className="h-9 dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600">
                 Back
-              </Button>
-              <Button onClick={onComplete} className="flex-1 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 h-9">
-                Complete Setup <CheckCircle2 className="w-4 h-4 ml-2" />
-              </Button>
+              </Button> */}
+              <LoadingButton isLoading={loading} onClick={onComplete} className="  cursor-pointer flex-1 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 h-9">
+              <span className=' flex gap-3 items-center'>  Skip <ArrowRight className="w-4 h-4 ml-2" /></span>
+              </LoadingButton>
             </div>
           </div>
         )}
