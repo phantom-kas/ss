@@ -9,7 +9,7 @@ import logo from 'figma:asset/872c19024a848c86be2cfb9320e9ce2d33228284.png';
 import { Link, useNavigate } from '@tanstack/react-router';
 import axios from 'axios';
 import { showError } from '@/lib/error';
-import api, { setAccessToken } from '@/lib/axios';
+import api from '@/lib/axios';
 import { toast } from 'sonner';
 import { LoadingButton } from './Elements/Button';
 import { useAuthStore } from '@/stores/auth';
@@ -38,11 +38,11 @@ const login = useAuthStore((state) => state.login);
     setLoading(true)
     const res  = await api.post('/auth/login',formData)
 
-  const { data, accessToken } = res.data;
+  const { data, accessToken  } = res.data;
 
     //  alert('d')
       login(data, accessToken);
-setAccessToken(accessToken)
+// setAccessToken(accessToken)
       if(!data.done_onboarding){
         navigate({ to: '/onboarding' });
 return

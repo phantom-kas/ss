@@ -11,7 +11,7 @@ const api = axios.create({
 });
 
 // In-memory store for tokens
-let accessToken: string | null = null;
+
 let isRefreshing = false;
 let failedQueue: {
   resolve: (token: string) => void;
@@ -36,9 +36,10 @@ const processQueue = (error: any, token: string | null = null) => {
 // Request Interceptor
 // ---------------------------
 api.interceptors.request.use(
-  (config) => {
+  async (config) => {
+    await waitForHydration()
    const token = useAuthStore.getState().token;
-
+console.log('--------- '+token)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -85,7 +86,7 @@ api.interceptors.response.use(
           { withCredentials: true } // send refresh token if in cookie
         );
 
-        accessToken = data.data.accessToken;
+       let accessToken = data.data.accessToken;
         // alert(accessToken)
           useAuthStore.setState({ token: accessToken });
         // Update original request
@@ -94,7 +95,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (err) {
         processQueue(err, null);
-        accessToken = null; // logout user in frontend
+       // accessToken = null; // logout user in frontend
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -110,8 +111,22 @@ export default api;
 // ---------------------------
 // Optional helper to set token manually (after login)
 // ---------------------------
-export const setAccessToken = (token: string) => {
-  // alert(token)
-  accessToken = token;
-  // api.defaults.headers['Authorization'] = `Bearer ${accessToken}`
+
+
+
+const waitForHydration = () => {
+  return new Promise<void>((resolve) => {
+    const unsub = useAuthStore.subscribe((state) => {
+      if (state.hasHydrated) {
+        unsub();
+        resolve();
+      }
+    });
+
+    // already hydrated (page navigation case)
+    if (useAuthStore.getState().hasHydrated) {
+      unsub();
+      resolve();
+    }
+  });
 };

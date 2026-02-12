@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 type User = {
   id: number;
@@ -9,27 +9,35 @@ type User = {
   selected_currency?: string;
 };
 
+
+
 type AuthState = {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
- updateUser: (data: Partial<User>) => void; 
+  hasHydrated: boolean; // 👈 add this
+
+  updateUser: (data: Partial<User>) => void;
   login: (user: User, token: string) => void;
   logout: () => void;
   isLoggedIn: () => boolean;
+  setHasHydrated: (state: boolean) => void; // 👈 add this
 };
-
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
       token: null,
       isAuthenticated: false,
+      hasHydrated: false,
+
+      setHasHydrated: (state) => set({ hasHydrated: state }),
 
       updateUser: (data) =>
         set((state) => ({
           user: state.user ? { ...state.user, ...data } : state.user,
         })),
+
       login: (user, token) =>
         set({
           user,
@@ -44,17 +52,18 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: false,
         }),
 
-      isLoggedIn: () => {
-        return get().isAuthenticated && !!get().token;
-      },
+      isLoggedIn: () => get().isAuthenticated && !!get().token,
     }),
     {
-      name: "auth-store", // localStorage key
-      partialize: (state) => ({
-        user: state.user,
-        token: state.token,
-        isAuthenticated: state.isAuthenticated,
-      }),
+      name: "auth-store",
+
+      // ✅ THIS is what you were missing
+      storage: createJSONStorage(() => localStorage),
+
+      // ✅ hydration flag (your part was correct)
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
   )
 );
