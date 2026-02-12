@@ -58,6 +58,7 @@
       "devDependencies": {
             "@tanstack/router-cli": "^1.159.4",
             "@tanstack/router-generator": "^1.159.4",
+            "@tanstack/router-plugin": "^1.159.5",
             "@types/node": "^20.10.0",
             "@types/react": "^19.2.10",
             "@vitejs/plugin-react-swc": "^3.10.2",
