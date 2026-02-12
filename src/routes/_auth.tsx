@@ -3,12 +3,12 @@ import { AppLayout } from '../components/AppLayout';
 
 export const Route = createFileRoute('/_auth')({
   beforeLoad: async ({ location }) => {
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-    if (!isAuthenticated) {
-      throw redirect({
-        to: '/signin',
-      });
-    }
+    // const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    // if (!isAuthenticated) {
+    //   throw redirect({
+    //     to: '/signin',
+    //   });
+    // }
   },
   component: AuthLayout,
 });

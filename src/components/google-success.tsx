@@ -26,10 +26,12 @@ useEffect(() => {
     const { data, accessToken } = res.data;
     login(data, accessToken);
 
+      // alert('hehe')
     if (!data.done_onboarding) {
       navigate({ to: '/onboarding' });
       return;
     }
+      // alert('hoho')
 
     navigate({ to: '/dashboard' });
   };
