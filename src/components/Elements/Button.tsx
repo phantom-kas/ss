@@ -31,7 +31,7 @@ export const LoadingButton: React.FC<LoadingButtonProps> = ({
       {isLoading && (
         <Loader className="animate-spin h-4 w-4 text-current" />
       )}
-      <span className={cn(isLoading ? "opacity-50" : "opacity-100")}>
+      <span className={cn('  ',isLoading ? "opacity-50" : "opacity-100")}>
         {isLoading && loadingText ? loadingText : children}
       </span>
     </Button>

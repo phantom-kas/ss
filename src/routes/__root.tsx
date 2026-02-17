@@ -1,4 +1,5 @@
 import { AuthGate } from '@/components/a';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRootRoute, Outlet } from '@tanstack/react-router';
 
 export const Route = createRootRoute({
@@ -6,5 +7,8 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
-  return<AuthGate><Outlet /></AuthGate> ;
+
+const queryClient = new QueryClient()
+
+  return  <QueryClientProvider client={queryClient}><AuthGate><Outlet /></AuthGate></QueryClientProvider> ;
 }

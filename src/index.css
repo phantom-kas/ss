@@ -198,6 +198,7 @@
   }
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
 @layer base {
   *, :after, :before, ::backdrop {
     box-sizing: border-box;
