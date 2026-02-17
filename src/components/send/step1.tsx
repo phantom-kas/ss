@@ -515,6 +515,22 @@ const Step1 = ({
               </p>
             )}
           </div>
+            <button
+        className="w-full text-white  bg-red-700 hover:bg-red-800 dark:bg-red-600 dark:hover:bg-red-700 h-11 sm:h-12 text-sm sm:text-base font-semibold shadow-lg"
+        onClick={()=>setSendData((prev:any) => ({
+      ...prev,
+      recipientAccount: undefined,
+      recipientId: undefined,
+      recipientName: undefined,
+    }))}
+        // isLoading={loading}
+        type="button"
+      
+      >
+      
+          Cancel
+        {/* </span> */}
+      </button>
         </Card>
       )}
       <LoadingButton
