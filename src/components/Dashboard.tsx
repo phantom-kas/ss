@@ -12,6 +12,7 @@ import {
 } from './ui/dropdown-menu';
 import { AppLayout } from './AppLayout';
 import type { Page } from '../App';
+import AddPayoutMethodDialog from './forms/AddPaymenInfo';
 
 interface DashboardProps {
   navigateTo: (page: Page) => void;
@@ -24,7 +25,7 @@ export function Dashboard({ navigateTo, onLogout }: DashboardProps) {
     { id: '2', recipient: 'Ama Owusu', amount: 750, status: 'completed', date: '1d ago' },
     { id: '3', recipient: 'Kofi Asante', amount: 300, status: 'pending', date: '2d ago' },
   ];
-
+const [open, setOpen] = useState(false);
   // Recent recipients data (same as in SendMoney component)
   const recentRecipients = [
     {
@@ -66,7 +67,7 @@ export function Dashboard({ navigateTo, onLogout }: DashboardProps) {
     },
   ];
 
-  return (
+  return (<>
     
       <main className="max-w-2xl mx-auto px-3 sm:px-6 py-3 sm:py-6 pb-20 md:pb-6">
         {/* Header */}
@@ -91,7 +92,7 @@ export function Dashboard({ navigateTo, onLogout }: DashboardProps) {
               <span className="text-xs font-medium">Send Money</span>
             </button>
             <button 
-              onClick={() => navigateTo('payment-methods')}
+              onClick={() =>setOpen(true)}
               className="flex flex-col items-center gap-1.5 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-colors active:scale-95"
             >
               <div className="w-11 h-11 bg-white/20 rounded-full flex items-center justify-center">
@@ -177,6 +178,17 @@ export function Dashboard({ navigateTo, onLogout }: DashboardProps) {
           </div>
         </Card>
       </main>
+
+
+ <AddPayoutMethodDialog
+        open={open}
+        onOpenChange={setOpen}
+        ghanaianBanks={[]}
+        onSaved={(wallet) => {
+          console.log("Saved wallet:", wallet);
+        }}
+      />
+</>
 
   );
 }

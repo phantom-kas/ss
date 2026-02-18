@@ -432,9 +432,9 @@ export function SendMoney({ navigateTo, onLogout, prefilledRecipient }: SendMone
 
           
           )}
-  <div>
+  {/* <div>
               {JSON.stringify(sendData)}
-            </div>
+            </div> */}
           {/* Step 2: Amount */}
           {step === 2 && (
             <motion.div
