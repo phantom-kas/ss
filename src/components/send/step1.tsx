@@ -15,9 +15,9 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MomoNetworkSelect from "../forms/MomoNetworkSelect";
-import { cn } from "@/lib/utils";
+import { cn, maskedLast4 } from "@/lib/utils";
 import { toast } from "sonner";
 import api from "@/lib/axios";
 import { showError } from "@/lib/error";
@@ -136,7 +136,7 @@ const Step1 = ({
       networkCode: data.networkCode || null,
       networkName: data.networkName || null,
     };
-
+    
     try {
       const res = await api.post("/recipients/add-raw", recipientPayload);
 
@@ -153,6 +153,42 @@ const Step1 = ({
       setLoading(false);
     }
   };
+
+const fetchRecipientById = async (id: string) => {
+  try {
+    setLoading(true)
+    const res = await api.get(`/recipients/single?id=${id}`); // your endpoint
+    const recipient = res.data.data;
+
+    // Set recipient in sendData
+  
+    setSendData((prev: any) => ({
+      ...prev,
+      recipientId: recipient.id,
+      recipientName: recipient.full_name || recipient.name,
+      recipientPhone: maskedLast4(recipient.momo_number || ""),
+      recipientBank: recipient.bank_name || "",
+      recipientAccount: recipient.account_number || "",
+      deliveryMethod: recipient.method === "mobile_money" ? "mobile" : recipient.method,
+    }));
+
+    // alert('he')
+  } catch (err) {
+    showError(err);
+  }finally{
+    setLoading(false)
+
+  }
+};
+  useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  const recipientId = params.get("recipient_id");
+
+  if (recipientId) {
+    // fetch recipient by id
+    fetchRecipientById(recipientId);
+  }
+}, []);
   return (
     <motion.div
       key="step1"

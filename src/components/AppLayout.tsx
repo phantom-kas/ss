@@ -74,9 +74,9 @@ export function AppLayout({ children, navigateTo=()=>{} , currentPage, onLogout=
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-16">
       {/* Desktop Navigation */}
-      <nav className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 hidden md:block">
+      <nav className=" top-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 hidden md:block fixed w-full z-11">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <button onClick={() => navigateTo('dashboard')} className="flex items-center gap-2">

@@ -57,6 +57,7 @@ function AuthLayout() {
       onLogout={handleLogout}
     >
       <Outlet />
+      <div className=' mt-30 '> </div>
     </AppLayout>
   );
 }

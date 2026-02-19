@@ -13,6 +13,11 @@ import {
 import { AppLayout } from './AppLayout';
 import type { Page } from '../App';
 import AddPayoutMethodDialog from './forms/AddPaymenInfo';
+import { RecentRecipientsHome } from './recipientsHome.';
+import { toast } from 'sonner';
+import { showError } from '@/lib/error';
+import api from '@/lib/axios';
+import { useNavigate } from '@tanstack/react-router';
 
 interface DashboardProps {
   navigateTo: (page: Page) => void;
@@ -25,7 +30,7 @@ export function Dashboard({ navigateTo, onLogout }: DashboardProps) {
     { id: '2', recipient: 'Ama Owusu', amount: 750, status: 'completed', date: '1d ago' },
     { id: '3', recipient: 'Kofi Asante', amount: 300, status: 'pending', date: '2d ago' },
   ];
-const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   // Recent recipients data (same as in SendMoney component)
   const recentRecipients = [
     {
@@ -66,129 +71,143 @@ const [open, setOpen] = useState(false);
       type: 'Mobile Money'
     },
   ];
-
-  return (<>
+ const handleSubmit = async (data:any) => {
+    // e.preventDefault();
+    console.log(data)
+    if (data.recipientId) {
+      // handleNext();
+      return;
+    }
+    // setLoading(true);
+    // Validation
     
-      <main className="max-w-2xl mx-auto px-3 sm:px-6 py-3 sm:py-6 pb-20 md:pb-6">
-        {/* Header */}
-        <div className="mb-3 sm:mb-4">
-          <h1 className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white">Hi, John 👋</h1>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Send money to Ghana instantly</p>
+    if (!data.deliveryMethod)
+      return {error:"Select a delivery method"};
+    if (!data.name)
+      return {error:"Recipient name is required"};
+    if (data.deliveryMethod === "mobile" && !data.phone)
+      return {error:"Enter recipient's mobile number"};
+    if (
+      data.deliveryMethod === "bank" &&
+      (!data.bank || !data.account)
+    )
+      return{error:"Enter recipient's bank details"};
+
+    const recipientPayload = {
+      deliveryMethod: data.deliveryMethod,
+      
+      name: data.name,
+      phone: data.phone || null,
+      bank: data.bank || null,
+      account: data.recipientAccount || null,
+      networkCode: data.networkCode || null,
+      networkName: data.networkName || null,
+    };
+
+    try {
+      const url = mode =='me'? "/recipients/add/me":'/recipients/add-raw'
+      const res = await api.post(url, recipientPayload);
+
+      // setSendData(old=>{return {...old,
+      //   recipientId:res.data.data.id,
+      //    recipientName: data.recipientName,
+      //           recipientPhone: data.recipientPhone,
+      // }})
+      // toast.success("Saved Successfully");
+      return res
+      // handleNext();
+    } catch (err) {
+      showError(err);
+    } finally {
+      // setLoading(false);
+    }
+  };
+  const navigate2 = useNavigate()
+  const [mode , setMode] = useState<'me'| 'other'>('me')
+  return (<>
+
+    <main className="max-w-2xl mx-auto px-3 sm:px-6 py-3 sm:py-6 pb-20 md:pb-6">
+      {/* Header */}
+      <div className="mb-3 sm:mb-4">
+        <h1 className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white">Hi, John 👋</h1>
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Send money to Ghana instantly</p>
+      </div>
+
+      {/* Quick Actions Card */}
+      <Card className="p-4 bg-gradient-to-br from-blue-600 to-blue-800 dark:from-blue-700 dark:to-blue-900 text-white border-0 shadow-lg mb-3">
+        <p className="text-xs text-blue-100 mb-2">Quick Actions</p>
+
+        {/* Action Buttons */}
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => navigateTo('send')}
+            className="flex flex-col items-center gap-1.5 p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl transition-colors active:scale-95"
+          >
+            <div className="w-11 h-11 bg-white rounded-full flex items-center justify-center">
+              <Send className="w-6 h-6 text-blue-600" />
+            </div>
+            <span className="text-xs font-medium">Send Money</span>
+          </button>
+          <button
+            onClick={() =>{setMode('me'); setOpen(true)}}
+            className="flex flex-col items-center gap-1.5 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-colors active:scale-95"
+          >
+            <div className="w-11 h-11 bg-white/20 rounded-full flex items-center justify-center">
+              <CreditCard className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-xs font-medium">Add Payment Method</span>
+          </button>
+        </div>
+      </Card>
+
+      {/* Exchange Rate Comparison */}
+      <Card className="p-4 mb-3 sm:mb-4 bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-emerald-600 dark:to-emerald-700 text-white border-0 shadow-lg">
+        <div className="flex items-center gap-2 mb-3">
+          <Zap className="w-4 h-4 fill-white" />
+          <p className="text-xs font-semibold text-white">StableSend Exchange Rate 🇬🇭</p>
         </div>
 
-        {/* Quick Actions Card */}
-        <Card className="p-4 bg-gradient-to-br from-blue-600 to-blue-800 dark:from-blue-700 dark:to-blue-900 text-white border-0 shadow-lg mb-3">
-          <p className="text-xs text-blue-100 mb-2">Quick Actions</p>
-          
-          {/* Action Buttons */}
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => navigateTo('send')}
-              className="flex flex-col items-center gap-1.5 p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl transition-colors active:scale-95"
-            >
-              <div className="w-11 h-11 bg-white rounded-full flex items-center justify-center">
-                <Send className="w-6 h-6 text-blue-600" />
-              </div>
-              <span className="text-xs font-medium">Send Money</span>
-            </button>
-            <button 
-              onClick={() =>setOpen(true)}
-              className="flex flex-col items-center gap-1.5 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-colors active:scale-95"
-            >
-              <div className="w-11 h-11 bg-white/20 rounded-full flex items-center justify-center">
-                <CreditCard className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xs font-medium">Add Payment Method</span>
-            </button>
-          </div>
-        </Card>
-
-        {/* Exchange Rate Comparison */}
-        <Card className="p-4 mb-3 sm:mb-4 bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-emerald-600 dark:to-emerald-700 text-white border-0 shadow-lg">
-          <div className="flex items-center gap-2 mb-3">
-            <Zap className="w-4 h-4 fill-white" />
-            <p className="text-xs font-semibold text-white">StableSend Exchange Rate 🇬🇭</p>
-          </div>
-          
-          {/* StableSend Rate */}
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-white">Our Rate</span>
-              <div className="flex items-center gap-1">
-                <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
-                <span className="text-[10px] text-emerald-100">Live</span>
-              </div>
-            </div>
-            <div className="flex items-baseline gap-2 mb-1.5">
-              <span className="text-4xl font-bold">₵11.25</span>
-              <span className="text-sm text-emerald-100">per USD</span>
-            </div>
-            <div className="flex items-center justify-between text-xs text-emerald-100">
-              <span>1 USD = 11.25 GHS</span>
-              <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">StableSend Rate</span>
+        {/* StableSend Rate */}
+        <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-white">Our Rate</span>
+            <div className="flex items-center gap-1">
+              <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+              <span className="text-[10px] text-emerald-100">Live</span>
             </div>
           </div>
-        </Card>
-
-        {/* Recent Recipients */}
-        <Card className="p-3 sm:p-4 dark:bg-slate-800 dark:border-slate-700 mb-3 sm:mb-4">
-          <div className="flex justify-between items-center mb-2.5">
-            <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <User className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              Send Again
-            </h3>
-            <button
-              onClick={() => navigateTo('send')}
-              className="text-xs text-blue-600 dark:text-blue-400 font-medium hover:underline"
-            >
-              New Recipient
-            </button>
+          <div className="flex items-baseline gap-2 mb-1.5">
+            <span className="text-4xl font-bold">₵11.25</span>
+            <span className="text-sm text-emerald-100">per USD</span>
           </div>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">Quick send to your recent recipients</p>
-          
-          {/* Horizontal scrollable recipients */}
-          <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
-            {recentRecipients.map((recipient) => (
-              <button
-                key={recipient.id}
-                onClick={() => navigateTo('send', {
-                  deliveryMethod: recipient.deliveryMethod,
-                  recipientName: recipient.name,
-                  recipientPhone: recipient.phone,
-                  recipientBank: recipient.bank,
-                  recipientAccount: recipient.account,
-                })}
-                className="flex-shrink-0 w-[140px] sm:w-[160px] p-3 border-2 border-slate-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 rounded-xl transition-all group active:scale-95"
-              >
-                <div className="flex flex-col items-center text-center gap-2">
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-emerald-600 dark:to-emerald-700 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-                    {recipient.avatar}
-                  </div>
-                  <div className="w-full">
-                    <p className="text-sm font-bold text-slate-900 dark:text-white truncate mb-0.5">{recipient.name}</p>
-                    <p className="text-[10px] text-slate-600 dark:text-slate-400 truncate mb-1">{recipient.type}</p>
-                    <div className="flex items-center justify-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Send className="w-3 h-3" />
-                      <span>Send</span>
-                    </div>
-                  </div>
-                </div>
-              </button>
-            ))}
+          <div className="flex items-center justify-between text-xs text-emerald-100">
+            <span>1 USD = 11.25 GHS</span>
+            <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">StableSend Rate</span>
           </div>
-        </Card>
-      </main>
+        </div>
+      </Card>
 
 
- <AddPayoutMethodDialog
-        open={open}
-        onOpenChange={setOpen}
-        ghanaianBanks={[]}
-        onSaved={(wallet) => {
-          console.log("Saved wallet:", wallet);
-        }}
+
+      <RecentRecipientsHome onSelect={(a)=>{navigate2({to:'/send',search:{recipient_id:a.id}})}} onClickAdd={()=>{setMode('other');setOpen(true)}} deliveryMethod={undefined} 
       />
-</>
+
+    </main>
+
+
+
+    <AddPayoutMethodDialog
+    mode={mode}
+      open={open}
+      onOpenChange={setOpen}
+      ghanaianBanks={[]}
+      onSaved={async(wallet) => {
+        console.log("Saved wallet:", wallet);
+         await handleSubmit(wallet)
+      }}
+      submitFunc={ async (wallet:any)=> await handleSubmit(wallet)}
+    />
+  </>
 
   );
 }

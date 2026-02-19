@@ -26,10 +26,10 @@ const pageParamEnv = 15
 
 const fetchRecipients = async ({
   pageParam = pageParamEnv,
-  method,
+  method=undefined,
 }: {
   pageParam?: number;
-  method: string | number;
+  method?: string | number;
 }) => {
   const res = await api.get("/recipients/raw", {
     params: {
@@ -42,7 +42,7 @@ const fetchRecipients = async ({
   return res.data.data; // assume standardResponse format: { data: [...], meta: {...} }
 };
 
-export const useRecipientsInfinite = (method: string) => {
+export const useRecipientsInfinite = (method?: string) => {
   return useInfiniteQuery({
     queryKey: ["recipients", method],
     queryFn: ({ pageParam }) =>

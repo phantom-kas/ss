@@ -20,6 +20,9 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   ghanaianBanks: any[];
   onSaved?: (wallet: any) => void;
+  submitFunc:(e?:any)=>Promise<any>,
+
+  mode:'me'|'other'
 };
 
 export default function AddPayoutMethodDialog({
@@ -27,8 +30,10 @@ export default function AddPayoutMethodDialog({
   onOpenChange,
   ghanaianBanks,
   onSaved,
+  submitFunc,
+  mode='me'
 }: Props) {
-  const [deliveryMethod, setDeliveryMethod] = useState<string>();
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values: RecipientFormValues) => {
@@ -51,10 +56,14 @@ export default function AddPayoutMethodDialog({
     try {
       setLoading(true);
 
-      const res = await api.post("/user/payout-methods", payload);
+      const res =await submitFunc(payload) //await api.post("/user/payout-methods", payload);
 
       toast.success("Payment method added");
-
+      if(res.error)
+{
+  toast.error(res.error)
+  return
+}
       onSaved?.(res.data.data);
 
       // reset state
@@ -71,10 +80,13 @@ export default function AddPayoutMethodDialog({
     <Dialog open={open} onOpenChange={onOpenChange} >
       <DialogContent className="sm:max-w-lg overflow-auto h-screen">
         <DialogHeader>
-          <DialogTitle>Add Your Payment Details</DialogTitle>
-          <DialogDescription>
+          <DialogTitle>
+              {mode =='me' ?'Add Your Payment Details':'Recipient Details'}
+            
+            </DialogTitle>
+         { mode=='me' && <DialogDescription>
             This is where we will send money to you.
-          </DialogDescription>
+          </DialogDescription>}
         </DialogHeader>
 
         {/* Step 1 — Choose Method */}
@@ -88,7 +100,7 @@ export default function AddPayoutMethodDialog({
         {/* Step 2 — Enter Details */}
         {deliveryMethod && (
           <RecipientForm
-            deliveryMethod={deliveryMethod as DeliveryMethod}
+            deliveryMethod={deliveryMethod}
             ghanaianBanks={ghanaianBanks}
             onSubmit={handleSubmit}
           />
