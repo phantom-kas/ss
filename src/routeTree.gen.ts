@@ -13,6 +13,8 @@ import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as RequestPasswordResetRouteImport } from './routes/request-password-reset'
+import { Route as PasswordResetRouteImport } from './routes/password-reset'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as GoogleSuccessRouteImport } from './routes/google-success'
 import { Route as AuthRouteImport } from './routes/_auth'
@@ -46,6 +48,16 @@ const SignupRoute = SignupRouteImport.update({
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RequestPasswordResetRoute = RequestPasswordResetRouteImport.update({
+  id: '/request-password-reset',
+  path: '/request-password-reset',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PasswordResetRoute = PasswordResetRouteImport.update({
+  id: '/password-reset',
+  path: '/password-reset',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -125,6 +137,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/google-success': typeof GoogleSuccessRoute
   '/onboarding': typeof OnboardingRoute
+  '/password-reset': typeof PasswordResetRoute
+  '/request-password-reset': typeof RequestPasswordResetRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/test': typeof TestRoute
@@ -144,6 +158,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/google-success': typeof GoogleSuccessRoute
   '/onboarding': typeof OnboardingRoute
+  '/password-reset': typeof PasswordResetRoute
+  '/request-password-reset': typeof RequestPasswordResetRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/test': typeof TestRoute
@@ -165,6 +181,8 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/google-success': typeof GoogleSuccessRoute
   '/onboarding': typeof OnboardingRoute
+  '/password-reset': typeof PasswordResetRoute
+  '/request-password-reset': typeof RequestPasswordResetRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/test': typeof TestRoute
@@ -186,6 +204,8 @@ export interface FileRouteTypes {
     | '/'
     | '/google-success'
     | '/onboarding'
+    | '/password-reset'
+    | '/request-password-reset'
     | '/signin'
     | '/signup'
     | '/test'
@@ -205,6 +225,8 @@ export interface FileRouteTypes {
     | '/'
     | '/google-success'
     | '/onboarding'
+    | '/password-reset'
+    | '/request-password-reset'
     | '/signin'
     | '/signup'
     | '/test'
@@ -225,6 +247,8 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/google-success'
     | '/onboarding'
+    | '/password-reset'
+    | '/request-password-reset'
     | '/signin'
     | '/signup'
     | '/test'
@@ -246,6 +270,8 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   GoogleSuccessRoute: typeof GoogleSuccessRoute
   OnboardingRoute: typeof OnboardingRoute
+  PasswordResetRoute: typeof PasswordResetRoute
+  RequestPasswordResetRoute: typeof RequestPasswordResetRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
   TestRoute: typeof TestRoute
@@ -280,6 +306,20 @@ declare module '@tanstack/react-router' {
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/request-password-reset': {
+      id: '/request-password-reset'
+      path: '/request-password-reset'
+      fullPath: '/request-password-reset'
+      preLoaderRoute: typeof RequestPasswordResetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/password-reset': {
+      id: '/password-reset'
+      path: '/password-reset'
+      fullPath: '/password-reset'
+      preLoaderRoute: typeof PasswordResetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -416,6 +456,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   GoogleSuccessRoute: GoogleSuccessRoute,
   OnboardingRoute: OnboardingRoute,
+  PasswordResetRoute: PasswordResetRoute,
+  RequestPasswordResetRoute: RequestPasswordResetRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
   TestRoute: TestRoute,
