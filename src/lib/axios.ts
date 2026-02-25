@@ -5,8 +5,8 @@ import { useAuthStore } from '@/stores/auth';
 // ---------------------------
 const api = axios.create({
   // baseURL: import.meta.env.VITE_API_BASE_URL,
-  baseURL: 'http://localhost:3001',
-  // baseURL: 'https://gc-rest-api.onrender.com',
+  // baseURL: 'http://localhost:3001',
+  baseURL: 'https://gc-rest-api.onrender.com',
   withCredentials: true, // send cookies if using them
 });
 
@@ -42,8 +42,8 @@ export function redirectToLogin() {
 api.interceptors.request.use(
   async (config) => {
     await waitForHydration()
-   const token = useAuthStore.getState().token;
-console.log('--------- '+token)
+    const token = useAuthStore.getState().token;
+    console.log('--------- ' + token)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -60,7 +60,7 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (originalRequest.url == '/auth/login') {
+    if (originalRequest.url == '/auth/login' || originalRequest.url == '/auth/reset-password') {
       // alert('ss')
       return Promise.reject(error);
     }
@@ -90,18 +90,18 @@ api.interceptors.response.use(
           { withCredentials: true } // send refresh token if in cookie
         );
 
-       let accessToken = data.data.accessToken;
+        let accessToken = data.data.accessToken;
         // alert(accessToken)
-          useAuthStore.setState({ token: accessToken });
+        useAuthStore.setState({ token: accessToken });
         // Update original request
         originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
         processQueue(null, accessToken);
         return api(originalRequest);
       } catch (err) {
         processQueue(err, null);
-         redirectToLogin();
+        redirectToLogin();
 
-       // accessToken = null; // logout user in frontend
+        // accessToken = null; // logout user in frontend
         return Promise.reject(err);
       } finally {
         isRefreshing = false;

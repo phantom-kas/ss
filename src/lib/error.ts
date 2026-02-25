@@ -73,7 +73,7 @@ export function showError(error: any) {
       break;
 
     case 403: // Forbidden
-    // alert(data.message)
+      // alert(data.message)
       toast.error(data.message || "You don't have permission to do this.", {
         className: "bg-red-600 text-white"
       });
@@ -117,27 +117,44 @@ export function showError(error: any) {
 }
 
 function handleValidationErrors(data: any) {
-  // Laravel validation errors format: { "errors": { "field": ["error1", "error2"] } }
-  console.log(data)
-  console.log(44444444444444444444444444444444444444)
-  if (data.errors && typeof data.errors === 'object') {
+  console.log(data);
+
+  // 1️⃣ Laravel-style: { errors: { field: ["msg"] } }
+  if (data.errors && typeof data.errors === "object" && !Array.isArray(data.errors)) {
     Object.values(data.errors).forEach((messages: any) => {
       if (Array.isArray(messages)) {
         messages.forEach((msg: string) => {
           toast.error(msg, { className: "bg-red-600 text-white" });
         });
-      } else if (typeof messages === 'string') {
+      } else if (typeof messages === "string") {
         toast.error(messages, { className: "bg-red-600 text-white" });
       }
     });
-  } else if (data.message) {
-    // Sometimes Laravel sends a single message for validation
-    toast.error(data.message, { className: "bg-red-600 text-white" });
-  } else {
-    toast.error("Validation failed. Please check your input.", {
-      className: "bg-red-600 text-white"
-    });
+    return;
   }
+
+  // 2️⃣ Your new format: { properties: { field: { errors: [] } } }
+  if (data.properties && typeof data.properties === "object") {
+    Object.values(data.properties).forEach((field: any) => {
+      if (field.errors && Array.isArray(field.errors)) {
+        field.errors.forEach((msg: string) => {
+          toast.error(msg, { className: "bg-red-600 text-white" });
+        });
+      }
+    });
+    return;
+  }
+
+  // 3️⃣ Single message fallback
+  if (data.message) {
+    toast.error(data.message, { className: "bg-red-600 text-white" });
+    return;
+  }
+
+  // 4️⃣ Default fallback
+  toast.error("Validation failed. Please check your input.", {
+    className: "bg-red-600 text-white"
+  });
 }
 
 function handleGenericError(data: any) {

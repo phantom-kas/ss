@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {  useNavigate, useSearch } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -10,15 +10,16 @@ import { Button } from "../ui/button";
 import logo from "figma:asset/872c19024a848c86be2cfb9320e9ce2d33228284.png";
 import api from "@/lib/axios";
 import { useAuthStore } from "@/stores/auth";
+import { showError } from "@/lib/error";
 
 export function ResetPassword() {
-  const searchParams = useSearch({from:'/password-reset'})  as any;
-  const token = searchParams.token ;
+  const searchParams = useSearch({ from: '/password-reset' }) as any;
+  const token = searchParams.token;
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-// alert(';')
+  // alert(';')
   // Optional: redirect if no token
   useEffect(() => {
     if (!token) {
@@ -44,12 +45,14 @@ export function ResetPassword() {
       setLoading(true);
 
       await api.post("/auth/reset-password", { token, newPassword });
+      // alert('sdad')
 
       toast.success("Password has been reset successfully!");
       // alert('sdad')
       navigate({ to: "/signin" });
     } catch (err: any) {
-      toast.error(err?.response?.data?.error || "Failed to reset password");
+      // toast.error(err?.response?.data?.error || "Failed to reset password");
+      showError(err)
     } finally {
       setLoading(false);
     }
