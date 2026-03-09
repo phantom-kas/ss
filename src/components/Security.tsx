@@ -5,6 +5,7 @@ import { Card } from './ui/card';
 import { Switch } from './ui/switch';
 import { AppLayout } from './AppLayout';
 import type { Page } from '../App';
+import { Link } from '@tanstack/react-router';
 
 interface SecurityProps {
   navigateTo: (page: Page) => void;
@@ -55,6 +56,7 @@ export function Security({ navigateTo, onLogout }: SecurityProps) {
         </Card>
 
         {/* Two-Factor Authentication */}
+        <Link to="/setup-2fa">
         <Card className="p-4 sm:p-6 mb-4 dark:bg-slate-800 dark:border-slate-700">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center flex-shrink-0">
@@ -97,7 +99,7 @@ export function Security({ navigateTo, onLogout }: SecurityProps) {
               )}
             </div>
           </div>
-        </Card>
+        </Card></Link>
 
         {/* Biometric Authentication */}
         <Card className="p-4 sm:p-6 mb-4 dark:bg-slate-800 dark:border-slate-700">

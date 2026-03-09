@@ -20,9 +20,11 @@ import { Route as GoogleSuccessRouteImport } from './routes/google-success'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthSupportRouteImport } from './routes/_auth/support'
+import { Route as AuthSetup2faRouteImport } from './routes/_auth/setup-2fa'
 import { Route as AuthSendRouteImport } from './routes/_auth/send'
 import { Route as AuthNotificationsRouteImport } from './routes/_auth/notifications'
 import { Route as AuthDashboardRouteImport } from './routes/_auth/dashboard'
+import { Route as Auth2faChallengeRouteImport } from './routes/_auth/2fa-challenge'
 import { Route as AuthTransactionsIndexRouteImport } from './routes/_auth/transactions/index'
 import { Route as AuthSettingsIndexRouteImport } from './routes/_auth/settings/index'
 import { Route as AuthTransactionsTransactionIdRouteImport } from './routes/_auth/transactions/$transactionId'
@@ -84,6 +86,11 @@ const AuthSupportRoute = AuthSupportRouteImport.update({
   path: '/support',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthSetup2faRoute = AuthSetup2faRouteImport.update({
+  id: '/setup-2fa',
+  path: '/setup-2fa',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthSendRoute = AuthSendRouteImport.update({
   id: '/send',
   path: '/send',
@@ -97,6 +104,11 @@ const AuthNotificationsRoute = AuthNotificationsRouteImport.update({
 const AuthDashboardRoute = AuthDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthRoute,
+} as any)
+const Auth2faChallengeRoute = Auth2faChallengeRouteImport.update({
+  id: '/2fa-challenge',
+  path: '/2fa-challenge',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthTransactionsIndexRoute = AuthTransactionsIndexRouteImport.update({
@@ -143,9 +155,11 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/test': typeof TestRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/2fa-challenge': typeof Auth2faChallengeRoute
   '/dashboard': typeof AuthDashboardRoute
   '/notifications': typeof AuthNotificationsRoute
   '/send': typeof AuthSendRoute
+  '/setup-2fa': typeof AuthSetup2faRoute
   '/support': typeof AuthSupportRoute
   '/settings/payment-methods': typeof AuthSettingsPaymentMethodsRoute
   '/settings/personal-info': typeof AuthSettingsPersonalInfoRoute
@@ -164,9 +178,11 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/test': typeof TestRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/2fa-challenge': typeof Auth2faChallengeRoute
   '/dashboard': typeof AuthDashboardRoute
   '/notifications': typeof AuthNotificationsRoute
   '/send': typeof AuthSendRoute
+  '/setup-2fa': typeof AuthSetup2faRoute
   '/support': typeof AuthSupportRoute
   '/settings/payment-methods': typeof AuthSettingsPaymentMethodsRoute
   '/settings/personal-info': typeof AuthSettingsPersonalInfoRoute
@@ -187,9 +203,11 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/test': typeof TestRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/_auth/2fa-challenge': typeof Auth2faChallengeRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
   '/_auth/notifications': typeof AuthNotificationsRoute
   '/_auth/send': typeof AuthSendRoute
+  '/_auth/setup-2fa': typeof AuthSetup2faRoute
   '/_auth/support': typeof AuthSupportRoute
   '/_auth/settings/payment-methods': typeof AuthSettingsPaymentMethodsRoute
   '/_auth/settings/personal-info': typeof AuthSettingsPersonalInfoRoute
@@ -210,9 +228,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/test'
     | '/verify-email'
+    | '/2fa-challenge'
     | '/dashboard'
     | '/notifications'
     | '/send'
+    | '/setup-2fa'
     | '/support'
     | '/settings/payment-methods'
     | '/settings/personal-info'
@@ -231,9 +251,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/test'
     | '/verify-email'
+    | '/2fa-challenge'
     | '/dashboard'
     | '/notifications'
     | '/send'
+    | '/setup-2fa'
     | '/support'
     | '/settings/payment-methods'
     | '/settings/personal-info'
@@ -253,9 +275,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/test'
     | '/verify-email'
+    | '/_auth/2fa-challenge'
     | '/_auth/dashboard'
     | '/_auth/notifications'
     | '/_auth/send'
+    | '/_auth/setup-2fa'
     | '/_auth/support'
     | '/_auth/settings/payment-methods'
     | '/_auth/settings/personal-info'
@@ -357,6 +381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSupportRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/setup-2fa': {
+      id: '/_auth/setup-2fa'
+      path: '/setup-2fa'
+      fullPath: '/setup-2fa'
+      preLoaderRoute: typeof AuthSetup2faRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/send': {
       id: '/_auth/send'
       path: '/send'
@@ -376,6 +407,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthDashboardRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/2fa-challenge': {
+      id: '/_auth/2fa-challenge'
+      path: '/2fa-challenge'
+      fullPath: '/2fa-challenge'
+      preLoaderRoute: typeof Auth2faChallengeRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/transactions/': {
@@ -424,9 +462,11 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthRouteChildren {
+  Auth2faChallengeRoute: typeof Auth2faChallengeRoute
   AuthDashboardRoute: typeof AuthDashboardRoute
   AuthNotificationsRoute: typeof AuthNotificationsRoute
   AuthSendRoute: typeof AuthSendRoute
+  AuthSetup2faRoute: typeof AuthSetup2faRoute
   AuthSupportRoute: typeof AuthSupportRoute
   AuthSettingsPaymentMethodsRoute: typeof AuthSettingsPaymentMethodsRoute
   AuthSettingsPersonalInfoRoute: typeof AuthSettingsPersonalInfoRoute
@@ -437,9 +477,11 @@ interface AuthRouteChildren {
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  Auth2faChallengeRoute: Auth2faChallengeRoute,
   AuthDashboardRoute: AuthDashboardRoute,
   AuthNotificationsRoute: AuthNotificationsRoute,
   AuthSendRoute: AuthSendRoute,
+  AuthSetup2faRoute: AuthSetup2faRoute,
   AuthSupportRoute: AuthSupportRoute,
   AuthSettingsPaymentMethodsRoute: AuthSettingsPaymentMethodsRoute,
   AuthSettingsPersonalInfoRoute: AuthSettingsPersonalInfoRoute,

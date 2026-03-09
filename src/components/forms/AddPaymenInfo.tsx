@@ -108,6 +108,7 @@ export default function AddPayoutMethodDialog({
 
         {/* Footer */}
         <LoadingButton
+        variant={'blue'}
           className="w-full mt-4"
           isLoading={loading}
           disabled={!deliveryMethod}
