@@ -6,6 +6,7 @@ import { Switch } from './ui/switch';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { AppLayout } from './AppLayout';
 import type { Page } from '../App';
+import { Link } from '@tanstack/react-router';
 
 interface SettingsProps {
   navigateTo: (page: Page) => void;
@@ -111,6 +112,7 @@ export function Settings({ navigateTo, onLogout }: SettingsProps) {
             subtitle="Name, email, phone number"
             onClick={() => navigateTo('personal-info')}
           />
+          
           
           <SettingsItem
             icon={Shield}

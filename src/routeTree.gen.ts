@@ -18,11 +18,14 @@ import { Route as PasswordResetRouteImport } from './routes/password-reset'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as GoogleSuccessRouteImport } from './routes/google-success'
 import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as R2faChallengeSigninRouteImport } from './routes/2fa-challenge-signin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthSupportRouteImport } from './routes/_auth/support'
+import { Route as AuthSetup2faRouteImport } from './routes/_auth/setup-2fa'
 import { Route as AuthSendRouteImport } from './routes/_auth/send'
 import { Route as AuthNotificationsRouteImport } from './routes/_auth/notifications'
 import { Route as AuthDashboardRouteImport } from './routes/_auth/dashboard'
+import { Route as Auth2faChallengeRouteImport } from './routes/_auth/2fa-challenge'
 import { Route as AuthTransactionsIndexRouteImport } from './routes/_auth/transactions/index'
 import { Route as AuthSettingsIndexRouteImport } from './routes/_auth/settings/index'
 import { Route as AuthTransactionsTransactionIdRouteImport } from './routes/_auth/transactions/$transactionId'
@@ -74,6 +77,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const R2faChallengeSigninRoute = R2faChallengeSigninRouteImport.update({
+  id: '/2fa-challenge-signin',
+  path: '/2fa-challenge-signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -82,6 +90,11 @@ const IndexRoute = IndexRouteImport.update({
 const AuthSupportRoute = AuthSupportRouteImport.update({
   id: '/support',
   path: '/support',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSetup2faRoute = AuthSetup2faRouteImport.update({
+  id: '/setup-2fa',
+  path: '/setup-2fa',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthSendRoute = AuthSendRouteImport.update({
@@ -97,6 +110,11 @@ const AuthNotificationsRoute = AuthNotificationsRouteImport.update({
 const AuthDashboardRoute = AuthDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthRoute,
+} as any)
+const Auth2faChallengeRoute = Auth2faChallengeRouteImport.update({
+  id: '/2fa-challenge',
+  path: '/2fa-challenge',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthTransactionsIndexRoute = AuthTransactionsIndexRouteImport.update({
@@ -135,6 +153,7 @@ const AuthSettingsPaymentMethodsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/2fa-challenge-signin': typeof R2faChallengeSigninRoute
   '/google-success': typeof GoogleSuccessRoute
   '/onboarding': typeof OnboardingRoute
   '/password-reset': typeof PasswordResetRoute
@@ -143,9 +162,11 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/test': typeof TestRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/2fa-challenge': typeof Auth2faChallengeRoute
   '/dashboard': typeof AuthDashboardRoute
   '/notifications': typeof AuthNotificationsRoute
   '/send': typeof AuthSendRoute
+  '/setup-2fa': typeof AuthSetup2faRoute
   '/support': typeof AuthSupportRoute
   '/settings/payment-methods': typeof AuthSettingsPaymentMethodsRoute
   '/settings/personal-info': typeof AuthSettingsPersonalInfoRoute
@@ -156,6 +177,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/2fa-challenge-signin': typeof R2faChallengeSigninRoute
   '/google-success': typeof GoogleSuccessRoute
   '/onboarding': typeof OnboardingRoute
   '/password-reset': typeof PasswordResetRoute
@@ -164,9 +186,11 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/test': typeof TestRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/2fa-challenge': typeof Auth2faChallengeRoute
   '/dashboard': typeof AuthDashboardRoute
   '/notifications': typeof AuthNotificationsRoute
   '/send': typeof AuthSendRoute
+  '/setup-2fa': typeof AuthSetup2faRoute
   '/support': typeof AuthSupportRoute
   '/settings/payment-methods': typeof AuthSettingsPaymentMethodsRoute
   '/settings/personal-info': typeof AuthSettingsPersonalInfoRoute
@@ -178,6 +202,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/2fa-challenge-signin': typeof R2faChallengeSigninRoute
   '/_auth': typeof AuthRouteWithChildren
   '/google-success': typeof GoogleSuccessRoute
   '/onboarding': typeof OnboardingRoute
@@ -187,9 +212,11 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/test': typeof TestRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/_auth/2fa-challenge': typeof Auth2faChallengeRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
   '/_auth/notifications': typeof AuthNotificationsRoute
   '/_auth/send': typeof AuthSendRoute
+  '/_auth/setup-2fa': typeof AuthSetup2faRoute
   '/_auth/support': typeof AuthSupportRoute
   '/_auth/settings/payment-methods': typeof AuthSettingsPaymentMethodsRoute
   '/_auth/settings/personal-info': typeof AuthSettingsPersonalInfoRoute
@@ -202,6 +229,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/2fa-challenge-signin'
     | '/google-success'
     | '/onboarding'
     | '/password-reset'
@@ -210,9 +238,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/test'
     | '/verify-email'
+    | '/2fa-challenge'
     | '/dashboard'
     | '/notifications'
     | '/send'
+    | '/setup-2fa'
     | '/support'
     | '/settings/payment-methods'
     | '/settings/personal-info'
@@ -223,6 +253,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/2fa-challenge-signin'
     | '/google-success'
     | '/onboarding'
     | '/password-reset'
@@ -231,9 +262,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/test'
     | '/verify-email'
+    | '/2fa-challenge'
     | '/dashboard'
     | '/notifications'
     | '/send'
+    | '/setup-2fa'
     | '/support'
     | '/settings/payment-methods'
     | '/settings/personal-info'
@@ -244,6 +277,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/2fa-challenge-signin'
     | '/_auth'
     | '/google-success'
     | '/onboarding'
@@ -253,9 +287,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/test'
     | '/verify-email'
+    | '/_auth/2fa-challenge'
     | '/_auth/dashboard'
     | '/_auth/notifications'
     | '/_auth/send'
+    | '/_auth/setup-2fa'
     | '/_auth/support'
     | '/_auth/settings/payment-methods'
     | '/_auth/settings/personal-info'
@@ -267,6 +303,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  R2faChallengeSigninRoute: typeof R2faChallengeSigninRoute
   AuthRoute: typeof AuthRouteWithChildren
   GoogleSuccessRoute: typeof GoogleSuccessRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -343,6 +380,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/2fa-challenge-signin': {
+      id: '/2fa-challenge-signin'
+      path: '/2fa-challenge-signin'
+      fullPath: '/2fa-challenge-signin'
+      preLoaderRoute: typeof R2faChallengeSigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -355,6 +399,13 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof AuthSupportRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/setup-2fa': {
+      id: '/_auth/setup-2fa'
+      path: '/setup-2fa'
+      fullPath: '/setup-2fa'
+      preLoaderRoute: typeof AuthSetup2faRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/send': {
@@ -376,6 +427,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthDashboardRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/2fa-challenge': {
+      id: '/_auth/2fa-challenge'
+      path: '/2fa-challenge'
+      fullPath: '/2fa-challenge'
+      preLoaderRoute: typeof Auth2faChallengeRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/transactions/': {
@@ -424,9 +482,11 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthRouteChildren {
+  Auth2faChallengeRoute: typeof Auth2faChallengeRoute
   AuthDashboardRoute: typeof AuthDashboardRoute
   AuthNotificationsRoute: typeof AuthNotificationsRoute
   AuthSendRoute: typeof AuthSendRoute
+  AuthSetup2faRoute: typeof AuthSetup2faRoute
   AuthSupportRoute: typeof AuthSupportRoute
   AuthSettingsPaymentMethodsRoute: typeof AuthSettingsPaymentMethodsRoute
   AuthSettingsPersonalInfoRoute: typeof AuthSettingsPersonalInfoRoute
@@ -437,9 +497,11 @@ interface AuthRouteChildren {
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  Auth2faChallengeRoute: Auth2faChallengeRoute,
   AuthDashboardRoute: AuthDashboardRoute,
   AuthNotificationsRoute: AuthNotificationsRoute,
   AuthSendRoute: AuthSendRoute,
+  AuthSetup2faRoute: AuthSetup2faRoute,
   AuthSupportRoute: AuthSupportRoute,
   AuthSettingsPaymentMethodsRoute: AuthSettingsPaymentMethodsRoute,
   AuthSettingsPersonalInfoRoute: AuthSettingsPersonalInfoRoute,
@@ -453,6 +515,7 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  R2faChallengeSigninRoute: R2faChallengeSigninRoute,
   AuthRoute: AuthRouteWithChildren,
   GoogleSuccessRoute: GoogleSuccessRoute,
   OnboardingRoute: OnboardingRoute,

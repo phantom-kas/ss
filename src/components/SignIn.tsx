@@ -12,7 +12,7 @@ import { showError } from '@/lib/error';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
 import { LoadingButton } from './Elements/Button';
-import { useAuthStore } from '@/stores/auth';
+import { authActions, useAuthStore } from '@/stores/auth';
 import { GoogleSignInButton } from './Elements/GoogleAuth';
 
 interface SignInProps {
@@ -31,32 +31,63 @@ const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    // alert('s')
-    e.preventDefault()
-   try{
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     // alert('s')
+//     e.preventDefault()
+//    try{
+//     setLoading(true)
+//     const res  = await api.post('/auth/login',formData)
+
+//   const { data, accessToken  } = res.data;
+
+//     //  alert('d')
+//       login(data, accessToken);
+// // setAccessToken(accessToken)
+//       if(!data.done_onboarding){
+//         navigate({ to: '/onboarding' });
+// return
+//       }
+//         navigate({ to: '/dashboard' });
+
+//     toast.success('Login success')
+//    }catch(e){
+//     showError(e)
+//    }finally{
+//     setLoading(false)
+//    }
+//   };
+
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  try {
     setLoading(true)
-    const res  = await api.post('/auth/login',formData)
+    const res = await api.post('/auth/login', formData)
+    const { data, accessToken } = res.data
 
-  const { data, accessToken  } = res.data;
+    // TOTP required — store partial token and redirect to challenge
+    if (data.requires2fa) {
+      authActions.setPartialToken(data.tempToken)
+      navigate({ to: '/2fa-challenge-signin' })
+      return
+    }
 
-    //  alert('d')
-      login(data, accessToken);
-// setAccessToken(accessToken)
-      if(!data.done_onboarding){
-        navigate({ to: '/onboarding' });
-return
-      }
-        navigate({ to: '/dashboard' });
+    // Full login
+    authActions.login(data, accessToken)
 
+    if (!data.done_onboarding) {
+      navigate({ to: '/onboarding' })
+      return
+    }
+
+    navigate({ to: '/dashboard' })
     toast.success('Login success')
-   }catch(e){
+  } catch (e) {
     showError(e)
-   }finally{
+  } finally {
     setLoading(false)
-   }
-  };
-
+  }
+}
 
   
   return (
