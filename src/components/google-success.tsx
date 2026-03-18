@@ -2,7 +2,7 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import Splash from '@/components/splash';
 import api from '@/lib/axios';
-import { useAuthStore } from '@/stores/auth';
+import { authActions, useAuthStore } from '@/stores/auth';
 import { showError } from '@/lib/error';
 
 
@@ -10,35 +10,43 @@ import { showError } from '@/lib/error';
 export function SplashWrapper() {
   const authStore = useAuthStore();
   const navigate = useNavigate();
-  const search = useSearch<{ user?: string }>({from:'/google-success'});
-const login = useAuthStore((state) => state.login);
-const [run , setRun] = useState(true)
-const ran = useRef(false);
+  const search = useSearch<{ user?: string, temptkn?: string }>({ from: '/google-success' });
+  const login = useAuthStore((state) => state.login);
+  const [run, setRun] = useState(true)
+  const ran = useRef(false);
 
-useEffect(() => {
-  if (ran.current) return; // already ran
-  if (!search.user) return;
+  useEffect(() => {
+    if (ran.current) return; // already ran
+    if (!search.user) return;
 
-  const fetchUser = async () => {
-    const res = await api.get(`auth/me/${search.user}`);
-    if (res.data.status !== 'success') return;
 
-    const { data, accessToken } = res.data;
-    login(data, accessToken);
+    const fetchUser = async () => {
+      const res = await api.get(`auth/me/${search.user}`);
+      if (res.data.status !== 'success') return;
+
+      const { data, accessToken } = res.data;
+      login(data, accessToken);
 
       // alert('hehe')
-    if (!data.done_onboarding) {
-      navigate({ to: '/onboarding' });
-      return;
-    }
+      if (!data.done_onboarding) {
+        navigate({ to: '/onboarding' });
+        return;
+      }
       // alert('hoho')
 
-    navigate({ to: '/dashboard' });
-  };
+      navigate({ to: '/dashboard' });
+    };
+    if (search.temptkn) {
 
-  fetchUser();
-  ran.current = true; // mark as run
-}, [search.user]);
+
+      authActions.setPartialToken(search.temptkn)
+      navigate({ to: '/2fa-challenge-signin' })
+
+      return
+    }
+    fetchUser();
+    ran.current = true; // mark as run
+  }, [search.user, search.temptkn]);
 
   return <Splash />;
 }
