@@ -16,8 +16,10 @@ export const setup2faApi = {
     api.post<Setup2FAResponse>('/api/2fa/setup').then((r) => r.data),
 
   /** Called after user scans QR and enters first code to confirm */
-  verifySetup: (code: string) =>
-    api.post<{ success: boolean }>('/2fa/verify-setup', { code }).then((r) => r.data),
+   verifySetup: async (code: string) => {
+    const { data } = await api.post('/api/2fa/verify-setup', { code })
+    return data
+  },
 
   /** Called during login when requires2fa === true. Uses tempToken. */
   verifyLogin: (code: string, tempToken: string) =>
