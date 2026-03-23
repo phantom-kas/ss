@@ -7,7 +7,7 @@ import { showError } from '@/lib/error'
 import axios from 'axios'
 import { toast } from 'sonner'
 
-export const Route = createFileRoute('/2fa-challenge-signin')({
+export const Route = createFileRoute('/_auth/2fa-challenge')({
   component: RouteComponent,
 })
 
