@@ -10,7 +10,9 @@ export function GoogleSignInButton() {
       await api.post('/auth/clearcookie');
 
       // Redirect to Google OAuth callback
+      // alert(api.defaults.baseURL)
       window.location.href = `${api.defaults.baseURL}/auth/google/callback`;
+      console.log('reirect to login')
     } catch (err) {
       console.error('Google sign-in failed:', err);
     }
