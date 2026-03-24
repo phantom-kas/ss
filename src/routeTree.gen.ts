@@ -38,6 +38,8 @@ import { Route as AuthSendRRouteImport } from './routes/_auth/send/r'
 import { Route as AuthSendAsdasdassRouteImport } from './routes/_auth/send/asdasdass'
 import { Route as AuthSendRecipientIdRouteImport } from './routes/_auth/send/$recipientId'
 import { Route as AuthSendRecipientIdVerifyRouteImport } from './routes/_auth/send/$recipientId/verify'
+import { Route as AuthSendRecipientIdReviewRouteImport } from './routes/_auth/send/$recipientId/review'
+import { Route as AuthSendRecipientIdPaymentRouteImport } from './routes/_auth/send/$recipientId/payment'
 import { Route as AuthSendRecipientIdAmountRouteImport } from './routes/_auth/send/$recipientId/amount'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
@@ -188,6 +190,18 @@ const AuthSendRecipientIdVerifyRoute =
     path: '/verify',
     getParentRoute: () => AuthSendRecipientIdRoute,
   } as any)
+const AuthSendRecipientIdReviewRoute =
+  AuthSendRecipientIdReviewRouteImport.update({
+    id: '/review',
+    path: '/review',
+    getParentRoute: () => AuthSendRecipientIdRoute,
+  } as any)
+const AuthSendRecipientIdPaymentRoute =
+  AuthSendRecipientIdPaymentRouteImport.update({
+    id: '/payment',
+    path: '/payment',
+    getParentRoute: () => AuthSendRecipientIdRoute,
+  } as any)
 const AuthSendRecipientIdAmountRoute =
   AuthSendRecipientIdAmountRouteImport.update({
     id: '/amount',
@@ -224,6 +238,8 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof AuthSettingsIndexRoute
   '/transactions/': typeof AuthTransactionsIndexRoute
   '/send/$recipientId/amount': typeof AuthSendRecipientIdAmountRoute
+  '/send/$recipientId/payment': typeof AuthSendRecipientIdPaymentRoute
+  '/send/$recipientId/review': typeof AuthSendRecipientIdReviewRoute
   '/send/$recipientId/verify': typeof AuthSendRecipientIdVerifyRoute
 }
 export interface FileRoutesByTo {
@@ -254,6 +270,8 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthSettingsIndexRoute
   '/transactions': typeof AuthTransactionsIndexRoute
   '/send/$recipientId/amount': typeof AuthSendRecipientIdAmountRoute
+  '/send/$recipientId/payment': typeof AuthSendRecipientIdPaymentRoute
+  '/send/$recipientId/review': typeof AuthSendRecipientIdReviewRoute
   '/send/$recipientId/verify': typeof AuthSendRecipientIdVerifyRoute
 }
 export interface FileRoutesById {
@@ -287,6 +305,8 @@ export interface FileRoutesById {
   '/_auth/settings/': typeof AuthSettingsIndexRoute
   '/_auth/transactions/': typeof AuthTransactionsIndexRoute
   '/_auth/send/$recipientId/amount': typeof AuthSendRecipientIdAmountRoute
+  '/_auth/send/$recipientId/payment': typeof AuthSendRecipientIdPaymentRoute
+  '/_auth/send/$recipientId/review': typeof AuthSendRecipientIdReviewRoute
   '/_auth/send/$recipientId/verify': typeof AuthSendRecipientIdVerifyRoute
 }
 export interface FileRouteTypes {
@@ -320,6 +340,8 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/transactions/'
     | '/send/$recipientId/amount'
+    | '/send/$recipientId/payment'
+    | '/send/$recipientId/review'
     | '/send/$recipientId/verify'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -350,6 +372,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/transactions'
     | '/send/$recipientId/amount'
+    | '/send/$recipientId/payment'
+    | '/send/$recipientId/review'
     | '/send/$recipientId/verify'
   id:
     | '__root__'
@@ -382,6 +406,8 @@ export interface FileRouteTypes {
     | '/_auth/settings/'
     | '/_auth/transactions/'
     | '/_auth/send/$recipientId/amount'
+    | '/_auth/send/$recipientId/payment'
+    | '/_auth/send/$recipientId/review'
     | '/_auth/send/$recipientId/verify'
   fileRoutesById: FileRoutesById
 }
@@ -604,6 +630,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSendRecipientIdVerifyRouteImport
       parentRoute: typeof AuthSendRecipientIdRoute
     }
+    '/_auth/send/$recipientId/review': {
+      id: '/_auth/send/$recipientId/review'
+      path: '/review'
+      fullPath: '/send/$recipientId/review'
+      preLoaderRoute: typeof AuthSendRecipientIdReviewRouteImport
+      parentRoute: typeof AuthSendRecipientIdRoute
+    }
+    '/_auth/send/$recipientId/payment': {
+      id: '/_auth/send/$recipientId/payment'
+      path: '/payment'
+      fullPath: '/send/$recipientId/payment'
+      preLoaderRoute: typeof AuthSendRecipientIdPaymentRouteImport
+      parentRoute: typeof AuthSendRecipientIdRoute
+    }
     '/_auth/send/$recipientId/amount': {
       id: '/_auth/send/$recipientId/amount'
       path: '/amount'
@@ -616,11 +656,15 @@ declare module '@tanstack/react-router' {
 
 interface AuthSendRecipientIdRouteChildren {
   AuthSendRecipientIdAmountRoute: typeof AuthSendRecipientIdAmountRoute
+  AuthSendRecipientIdPaymentRoute: typeof AuthSendRecipientIdPaymentRoute
+  AuthSendRecipientIdReviewRoute: typeof AuthSendRecipientIdReviewRoute
   AuthSendRecipientIdVerifyRoute: typeof AuthSendRecipientIdVerifyRoute
 }
 
 const AuthSendRecipientIdRouteChildren: AuthSendRecipientIdRouteChildren = {
   AuthSendRecipientIdAmountRoute: AuthSendRecipientIdAmountRoute,
+  AuthSendRecipientIdPaymentRoute: AuthSendRecipientIdPaymentRoute,
+  AuthSendRecipientIdReviewRoute: AuthSendRecipientIdReviewRoute,
   AuthSendRecipientIdVerifyRoute: AuthSendRecipientIdVerifyRoute,
 }
 
