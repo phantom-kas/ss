@@ -34,7 +34,7 @@ const processQueue = (error: any, token: string | null = null) => {
 export function redirectToLogin() {
   // optional: keep where user was going
 
-  alert('a')
+  // alert('a')
   const returnTo = window.location.pathname + window.location.search;
   window.location.href = `/signin?returnTo=${encodeURIComponent(returnTo)}`;
 }
@@ -62,7 +62,7 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    console.log('originalRequest',originalRequest)
+    console.log('originalRequest', originalRequest)
     console.log(error)
     if (originalRequest.url == '/auth/login' || originalRequest.url == '/auth/reset-password') {
       // alert('ss')
