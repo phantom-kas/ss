@@ -28,10 +28,19 @@ import { Route as AuthDashboardRouteImport } from './routes/_auth/dashboard'
 import { Route as Auth2faChallengeRouteImport } from './routes/_auth/2fa-challenge'
 import { Route as AuthTransactionsIndexRouteImport } from './routes/_auth/transactions/index'
 import { Route as AuthSettingsIndexRouteImport } from './routes/_auth/settings/index'
+import { Route as AuthSendIndexRouteImport } from './routes/_auth/send/index'
 import { Route as AuthTransactionsTransactionIdRouteImport } from './routes/_auth/transactions/$transactionId'
 import { Route as AuthSettingsSecurityRouteImport } from './routes/_auth/settings/security'
 import { Route as AuthSettingsPersonalInfoRouteImport } from './routes/_auth/settings/personal-info'
 import { Route as AuthSettingsPaymentMethodsRouteImport } from './routes/_auth/settings/payment-methods'
+import { Route as AuthSendSelectAccountRouteImport } from './routes/_auth/send/select-account'
+import { Route as AuthSendRRouteImport } from './routes/_auth/send/r'
+import { Route as AuthSendAsdasdassRouteImport } from './routes/_auth/send/asdasdass'
+import { Route as AuthSendRecipientIdRouteImport } from './routes/_auth/send/$recipientId'
+import { Route as AuthSendRecipientIdVerifyRouteImport } from './routes/_auth/send/$recipientId/verify'
+import { Route as AuthSendRecipientIdReviewRouteImport } from './routes/_auth/send/$recipientId/review'
+import { Route as AuthSendRecipientIdPaymentRouteImport } from './routes/_auth/send/$recipientId/payment'
+import { Route as AuthSendRecipientIdAmountRouteImport } from './routes/_auth/send/$recipientId/amount'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -127,6 +136,11 @@ const AuthSettingsIndexRoute = AuthSettingsIndexRouteImport.update({
   path: '/settings/',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthSendIndexRoute = AuthSendIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthSendRoute,
+} as any)
 const AuthTransactionsTransactionIdRoute =
   AuthTransactionsTransactionIdRouteImport.update({
     id: '/transactions/$transactionId',
@@ -150,6 +164,50 @@ const AuthSettingsPaymentMethodsRoute =
     path: '/settings/payment-methods',
     getParentRoute: () => AuthRoute,
   } as any)
+const AuthSendSelectAccountRoute = AuthSendSelectAccountRouteImport.update({
+  id: '/select-account',
+  path: '/select-account',
+  getParentRoute: () => AuthSendRoute,
+} as any)
+const AuthSendRRoute = AuthSendRRouteImport.update({
+  id: '/r',
+  path: '/r',
+  getParentRoute: () => AuthSendRoute,
+} as any)
+const AuthSendAsdasdassRoute = AuthSendAsdasdassRouteImport.update({
+  id: '/asdasdass',
+  path: '/asdasdass',
+  getParentRoute: () => AuthSendRoute,
+} as any)
+const AuthSendRecipientIdRoute = AuthSendRecipientIdRouteImport.update({
+  id: '/$recipientId',
+  path: '/$recipientId',
+  getParentRoute: () => AuthSendRoute,
+} as any)
+const AuthSendRecipientIdVerifyRoute =
+  AuthSendRecipientIdVerifyRouteImport.update({
+    id: '/verify',
+    path: '/verify',
+    getParentRoute: () => AuthSendRecipientIdRoute,
+  } as any)
+const AuthSendRecipientIdReviewRoute =
+  AuthSendRecipientIdReviewRouteImport.update({
+    id: '/review',
+    path: '/review',
+    getParentRoute: () => AuthSendRecipientIdRoute,
+  } as any)
+const AuthSendRecipientIdPaymentRoute =
+  AuthSendRecipientIdPaymentRouteImport.update({
+    id: '/payment',
+    path: '/payment',
+    getParentRoute: () => AuthSendRecipientIdRoute,
+  } as any)
+const AuthSendRecipientIdAmountRoute =
+  AuthSendRecipientIdAmountRouteImport.update({
+    id: '/amount',
+    path: '/amount',
+    getParentRoute: () => AuthSendRecipientIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -165,15 +223,24 @@ export interface FileRoutesByFullPath {
   '/2fa-challenge': typeof Auth2faChallengeRoute
   '/dashboard': typeof AuthDashboardRoute
   '/notifications': typeof AuthNotificationsRoute
-  '/send': typeof AuthSendRoute
+  '/send': typeof AuthSendRouteWithChildren
   '/setup-2fa': typeof AuthSetup2faRoute
   '/support': typeof AuthSupportRoute
+  '/send/$recipientId': typeof AuthSendRecipientIdRouteWithChildren
+  '/send/asdasdass': typeof AuthSendAsdasdassRoute
+  '/send/r': typeof AuthSendRRoute
+  '/send/select-account': typeof AuthSendSelectAccountRoute
   '/settings/payment-methods': typeof AuthSettingsPaymentMethodsRoute
   '/settings/personal-info': typeof AuthSettingsPersonalInfoRoute
   '/settings/security': typeof AuthSettingsSecurityRoute
   '/transactions/$transactionId': typeof AuthTransactionsTransactionIdRoute
+  '/send/': typeof AuthSendIndexRoute
   '/settings/': typeof AuthSettingsIndexRoute
   '/transactions/': typeof AuthTransactionsIndexRoute
+  '/send/$recipientId/amount': typeof AuthSendRecipientIdAmountRoute
+  '/send/$recipientId/payment': typeof AuthSendRecipientIdPaymentRoute
+  '/send/$recipientId/review': typeof AuthSendRecipientIdReviewRoute
+  '/send/$recipientId/verify': typeof AuthSendRecipientIdVerifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -189,15 +256,23 @@ export interface FileRoutesByTo {
   '/2fa-challenge': typeof Auth2faChallengeRoute
   '/dashboard': typeof AuthDashboardRoute
   '/notifications': typeof AuthNotificationsRoute
-  '/send': typeof AuthSendRoute
   '/setup-2fa': typeof AuthSetup2faRoute
   '/support': typeof AuthSupportRoute
+  '/send/$recipientId': typeof AuthSendRecipientIdRouteWithChildren
+  '/send/asdasdass': typeof AuthSendAsdasdassRoute
+  '/send/r': typeof AuthSendRRoute
+  '/send/select-account': typeof AuthSendSelectAccountRoute
   '/settings/payment-methods': typeof AuthSettingsPaymentMethodsRoute
   '/settings/personal-info': typeof AuthSettingsPersonalInfoRoute
   '/settings/security': typeof AuthSettingsSecurityRoute
   '/transactions/$transactionId': typeof AuthTransactionsTransactionIdRoute
+  '/send': typeof AuthSendIndexRoute
   '/settings': typeof AuthSettingsIndexRoute
   '/transactions': typeof AuthTransactionsIndexRoute
+  '/send/$recipientId/amount': typeof AuthSendRecipientIdAmountRoute
+  '/send/$recipientId/payment': typeof AuthSendRecipientIdPaymentRoute
+  '/send/$recipientId/review': typeof AuthSendRecipientIdReviewRoute
+  '/send/$recipientId/verify': typeof AuthSendRecipientIdVerifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -215,15 +290,24 @@ export interface FileRoutesById {
   '/_auth/2fa-challenge': typeof Auth2faChallengeRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
   '/_auth/notifications': typeof AuthNotificationsRoute
-  '/_auth/send': typeof AuthSendRoute
+  '/_auth/send': typeof AuthSendRouteWithChildren
   '/_auth/setup-2fa': typeof AuthSetup2faRoute
   '/_auth/support': typeof AuthSupportRoute
+  '/_auth/send/$recipientId': typeof AuthSendRecipientIdRouteWithChildren
+  '/_auth/send/asdasdass': typeof AuthSendAsdasdassRoute
+  '/_auth/send/r': typeof AuthSendRRoute
+  '/_auth/send/select-account': typeof AuthSendSelectAccountRoute
   '/_auth/settings/payment-methods': typeof AuthSettingsPaymentMethodsRoute
   '/_auth/settings/personal-info': typeof AuthSettingsPersonalInfoRoute
   '/_auth/settings/security': typeof AuthSettingsSecurityRoute
   '/_auth/transactions/$transactionId': typeof AuthTransactionsTransactionIdRoute
+  '/_auth/send/': typeof AuthSendIndexRoute
   '/_auth/settings/': typeof AuthSettingsIndexRoute
   '/_auth/transactions/': typeof AuthTransactionsIndexRoute
+  '/_auth/send/$recipientId/amount': typeof AuthSendRecipientIdAmountRoute
+  '/_auth/send/$recipientId/payment': typeof AuthSendRecipientIdPaymentRoute
+  '/_auth/send/$recipientId/review': typeof AuthSendRecipientIdReviewRoute
+  '/_auth/send/$recipientId/verify': typeof AuthSendRecipientIdVerifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -244,12 +328,21 @@ export interface FileRouteTypes {
     | '/send'
     | '/setup-2fa'
     | '/support'
+    | '/send/$recipientId'
+    | '/send/asdasdass'
+    | '/send/r'
+    | '/send/select-account'
     | '/settings/payment-methods'
     | '/settings/personal-info'
     | '/settings/security'
     | '/transactions/$transactionId'
+    | '/send/'
     | '/settings/'
     | '/transactions/'
+    | '/send/$recipientId/amount'
+    | '/send/$recipientId/payment'
+    | '/send/$recipientId/review'
+    | '/send/$recipientId/verify'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -265,15 +358,23 @@ export interface FileRouteTypes {
     | '/2fa-challenge'
     | '/dashboard'
     | '/notifications'
-    | '/send'
     | '/setup-2fa'
     | '/support'
+    | '/send/$recipientId'
+    | '/send/asdasdass'
+    | '/send/r'
+    | '/send/select-account'
     | '/settings/payment-methods'
     | '/settings/personal-info'
     | '/settings/security'
     | '/transactions/$transactionId'
+    | '/send'
     | '/settings'
     | '/transactions'
+    | '/send/$recipientId/amount'
+    | '/send/$recipientId/payment'
+    | '/send/$recipientId/review'
+    | '/send/$recipientId/verify'
   id:
     | '__root__'
     | '/'
@@ -293,12 +394,21 @@ export interface FileRouteTypes {
     | '/_auth/send'
     | '/_auth/setup-2fa'
     | '/_auth/support'
+    | '/_auth/send/$recipientId'
+    | '/_auth/send/asdasdass'
+    | '/_auth/send/r'
+    | '/_auth/send/select-account'
     | '/_auth/settings/payment-methods'
     | '/_auth/settings/personal-info'
     | '/_auth/settings/security'
     | '/_auth/transactions/$transactionId'
+    | '/_auth/send/'
     | '/_auth/settings/'
     | '/_auth/transactions/'
+    | '/_auth/send/$recipientId/amount'
+    | '/_auth/send/$recipientId/payment'
+    | '/_auth/send/$recipientId/review'
+    | '/_auth/send/$recipientId/verify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -450,6 +560,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSettingsIndexRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/send/': {
+      id: '/_auth/send/'
+      path: '/'
+      fullPath: '/send/'
+      preLoaderRoute: typeof AuthSendIndexRouteImport
+      parentRoute: typeof AuthSendRoute
+    }
     '/_auth/transactions/$transactionId': {
       id: '/_auth/transactions/$transactionId'
       path: '/transactions/$transactionId'
@@ -478,14 +595,107 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSettingsPaymentMethodsRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/send/select-account': {
+      id: '/_auth/send/select-account'
+      path: '/select-account'
+      fullPath: '/send/select-account'
+      preLoaderRoute: typeof AuthSendSelectAccountRouteImport
+      parentRoute: typeof AuthSendRoute
+    }
+    '/_auth/send/r': {
+      id: '/_auth/send/r'
+      path: '/r'
+      fullPath: '/send/r'
+      preLoaderRoute: typeof AuthSendRRouteImport
+      parentRoute: typeof AuthSendRoute
+    }
+    '/_auth/send/asdasdass': {
+      id: '/_auth/send/asdasdass'
+      path: '/asdasdass'
+      fullPath: '/send/asdasdass'
+      preLoaderRoute: typeof AuthSendAsdasdassRouteImport
+      parentRoute: typeof AuthSendRoute
+    }
+    '/_auth/send/$recipientId': {
+      id: '/_auth/send/$recipientId'
+      path: '/$recipientId'
+      fullPath: '/send/$recipientId'
+      preLoaderRoute: typeof AuthSendRecipientIdRouteImport
+      parentRoute: typeof AuthSendRoute
+    }
+    '/_auth/send/$recipientId/verify': {
+      id: '/_auth/send/$recipientId/verify'
+      path: '/verify'
+      fullPath: '/send/$recipientId/verify'
+      preLoaderRoute: typeof AuthSendRecipientIdVerifyRouteImport
+      parentRoute: typeof AuthSendRecipientIdRoute
+    }
+    '/_auth/send/$recipientId/review': {
+      id: '/_auth/send/$recipientId/review'
+      path: '/review'
+      fullPath: '/send/$recipientId/review'
+      preLoaderRoute: typeof AuthSendRecipientIdReviewRouteImport
+      parentRoute: typeof AuthSendRecipientIdRoute
+    }
+    '/_auth/send/$recipientId/payment': {
+      id: '/_auth/send/$recipientId/payment'
+      path: '/payment'
+      fullPath: '/send/$recipientId/payment'
+      preLoaderRoute: typeof AuthSendRecipientIdPaymentRouteImport
+      parentRoute: typeof AuthSendRecipientIdRoute
+    }
+    '/_auth/send/$recipientId/amount': {
+      id: '/_auth/send/$recipientId/amount'
+      path: '/amount'
+      fullPath: '/send/$recipientId/amount'
+      preLoaderRoute: typeof AuthSendRecipientIdAmountRouteImport
+      parentRoute: typeof AuthSendRecipientIdRoute
+    }
   }
 }
+
+interface AuthSendRecipientIdRouteChildren {
+  AuthSendRecipientIdAmountRoute: typeof AuthSendRecipientIdAmountRoute
+  AuthSendRecipientIdPaymentRoute: typeof AuthSendRecipientIdPaymentRoute
+  AuthSendRecipientIdReviewRoute: typeof AuthSendRecipientIdReviewRoute
+  AuthSendRecipientIdVerifyRoute: typeof AuthSendRecipientIdVerifyRoute
+}
+
+const AuthSendRecipientIdRouteChildren: AuthSendRecipientIdRouteChildren = {
+  AuthSendRecipientIdAmountRoute: AuthSendRecipientIdAmountRoute,
+  AuthSendRecipientIdPaymentRoute: AuthSendRecipientIdPaymentRoute,
+  AuthSendRecipientIdReviewRoute: AuthSendRecipientIdReviewRoute,
+  AuthSendRecipientIdVerifyRoute: AuthSendRecipientIdVerifyRoute,
+}
+
+const AuthSendRecipientIdRouteWithChildren =
+  AuthSendRecipientIdRoute._addFileChildren(AuthSendRecipientIdRouteChildren)
+
+interface AuthSendRouteChildren {
+  AuthSendRecipientIdRoute: typeof AuthSendRecipientIdRouteWithChildren
+  AuthSendAsdasdassRoute: typeof AuthSendAsdasdassRoute
+  AuthSendRRoute: typeof AuthSendRRoute
+  AuthSendSelectAccountRoute: typeof AuthSendSelectAccountRoute
+  AuthSendIndexRoute: typeof AuthSendIndexRoute
+}
+
+const AuthSendRouteChildren: AuthSendRouteChildren = {
+  AuthSendRecipientIdRoute: AuthSendRecipientIdRouteWithChildren,
+  AuthSendAsdasdassRoute: AuthSendAsdasdassRoute,
+  AuthSendRRoute: AuthSendRRoute,
+  AuthSendSelectAccountRoute: AuthSendSelectAccountRoute,
+  AuthSendIndexRoute: AuthSendIndexRoute,
+}
+
+const AuthSendRouteWithChildren = AuthSendRoute._addFileChildren(
+  AuthSendRouteChildren,
+)
 
 interface AuthRouteChildren {
   Auth2faChallengeRoute: typeof Auth2faChallengeRoute
   AuthDashboardRoute: typeof AuthDashboardRoute
   AuthNotificationsRoute: typeof AuthNotificationsRoute
-  AuthSendRoute: typeof AuthSendRoute
+  AuthSendRoute: typeof AuthSendRouteWithChildren
   AuthSetup2faRoute: typeof AuthSetup2faRoute
   AuthSupportRoute: typeof AuthSupportRoute
   AuthSettingsPaymentMethodsRoute: typeof AuthSettingsPaymentMethodsRoute
@@ -500,7 +710,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   Auth2faChallengeRoute: Auth2faChallengeRoute,
   AuthDashboardRoute: AuthDashboardRoute,
   AuthNotificationsRoute: AuthNotificationsRoute,
-  AuthSendRoute: AuthSendRoute,
+  AuthSendRoute: AuthSendRouteWithChildren,
   AuthSetup2faRoute: AuthSetup2faRoute,
   AuthSupportRoute: AuthSupportRoute,
   AuthSettingsPaymentMethodsRoute: AuthSettingsPaymentMethodsRoute,

@@ -71,7 +71,7 @@ function LoginTotpChallenge() {
       error={error}
       onCancel={() => {
         authActions.setPartialToken(null)
-        navigate({ to: '/login' })
+        navigate({ to: '/signin' })
       }}
       cancelLabel="Back to login"
     />

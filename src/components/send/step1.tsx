@@ -42,8 +42,10 @@ const Step1 = ({
   EXCHANGE_RATE: any;
   sendData: any;
   recentRecipients: any;
-  handleNext: any;
+  handleNext: (rid:string)=>void;
 }) => {
+
+  const [recipientId , setRecipientId] = useState<string |  undefined>()
   const handlePhoneChange = (phone: string) => {
     setSendData((prev) => ({
       ...prev,
@@ -90,7 +92,7 @@ const Step1 = ({
     setIsVerifying(false);
   };
   const handleAccountChange = (account: string) => {
-    setSendData((prev) => ({
+    setSendData((prev:any) => ({
       ...prev,
       recipientAccount: account,
       recipientId: undefined,
@@ -108,7 +110,7 @@ const Step1 = ({
   const handleSubmit = async (data:any) => {
     // e.preventDefault();
     if (data.recipientId) {
-      handleNext();
+      recipientId && handleNext(recipientId);
       return;
     }
     setLoading(true);
@@ -139,14 +141,14 @@ const Step1 = ({
     
     try {
       const res = await api.post("/recipients/add-raw", recipientPayload);
-
-      setSendData(old=>{return {...old,
+setRecipientId(res.data.data.id)
+      setSendData((old:any)=>{return {...old,
         recipientId:res.data.data.id,
          recipientName: data.recipientName,
                 recipientPhone: data.recipientPhone,
       }})
       toast.success("Saved Successfully");
-      handleNext();
+      recipientId && handleNext(recipientId);
     } catch (err) {
       showError(err);
     } finally {
@@ -161,7 +163,8 @@ const fetchRecipientById = async (id: string) => {
     const recipient = res.data.data;
 
     // Set recipient in sendData
-  
+    
+    setRecipientId(recipient.id)
     setSendData((prev: any) => ({
       ...prev,
       recipientId: recipient.id,
@@ -242,6 +245,7 @@ const fetchRecipientById = async (id: string) => {
           }     onSelect={function (recipient: any): void {
             console.log(recipient);
             if (recipient.method === "mobile_money") {
+              setRecipientId(recipient.id)
               setSendData({
                 ...sendData,
                 recipientId: recipient.id,
@@ -325,12 +329,15 @@ const fetchRecipientById = async (id: string) => {
 
             <button
         className="w-full text-white  bg-red-700 hover:bg-red-800 dark:bg-red-600 dark:hover:bg-red-700 h-11 sm:h-12 text-sm sm:text-base font-semibold shadow-lg"
-        onClick={()=>setSendData((prev:any) => ({
+        onClick={()=>{setSendData((prev:any) => ({
       ...prev,
       recipientAccount: undefined,
       recipientId: undefined,
       recipientName: undefined,
-    }))}
+    })) ; setRecipientId(undefined)   } 
+            
+  
+  }
         // isLoading={loading}
         type="button"
       
@@ -346,7 +353,7 @@ const fetchRecipientById = async (id: string) => {
         // onClick={handleNext}
         isLoading={loading}
         type="submit"
-        onClick={_e=>handleNext()}
+        onClick={_e=>recipientId && handleNext(recipientId)}
         disabled={
           !sendData.deliveryMethod ||
           !sendData.recipientName ||
