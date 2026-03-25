@@ -5,8 +5,8 @@ import { useAuthStore } from '@/stores/auth';
 // ---------------------------
 const api = axios.create({
   // baseURL: import.meta.env.VITE_API_BASE_URL,
-  baseURL: 'http://localhost:3001',
-  // baseURL: 'https://gc-rest-api.onrender.com',
+  // baseURL: 'http://localhost:3001',
+  baseURL: 'https://gc-rest-api.onrender.com',
   withCredentials: true, // send cookies if using them
 });
 
@@ -34,7 +34,7 @@ const processQueue = (error: any, token: string | null = null) => {
 export function redirectToLogin() {
   // optional: keep where user was going
 
-  // alert('a')
+  alert('a')
   const returnTo = window.location.pathname + window.location.search;
   window.location.href = `/signin?returnTo=${encodeURIComponent(returnTo)}`;
 }
