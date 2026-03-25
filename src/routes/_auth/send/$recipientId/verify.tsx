@@ -72,6 +72,7 @@ function RouteComponent() {
 
   // Poll KYC status while pending
   useEffect(() => {
+    // alert(step)
     if (step !== "kyc" || status?.kycStatus !== "pending") {
       if (kycStatusPollRef.current) {
         clearInterval(kycStatusPollRef.current);
@@ -420,7 +421,7 @@ function RouteComponent() {
           {/* SDK mount point */}
           <div ref={sdkContainerRef} className="min-h-[400px] mb-4 rounded-xl overflow-hidden" />
 
-          {(status?.kycStatus === "unverified" ||
+          {(status?.kycStatus === 'pending' || status?.kycStatus === 'not_started' || status?.kycStatus === "unverified" ||
             status?.kycStatus === "failed" ||
             !status?.hasCustomer) && (
             <Card className="p-5 dark:bg-slate-800 dark:border-slate-700">
