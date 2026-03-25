@@ -62,7 +62,7 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    console.log('originalRequest',originalRequest)
+    console.log('originalRequest', originalRequest)
     console.log(error)
     if (originalRequest.url == '/auth/login' || originalRequest.url == '/auth/reset-password') {
       // alert('ss')
