@@ -44,7 +44,7 @@ export function SendRoute() {
           <div className="flex items-center justify-center gap-2 sm:gap-3">
             {STEPS.map((s, idx) => {
               const stepNum = idx + 1;
-              const isDone   = stepNum < currentStep;
+              const isDone = stepNum < currentStep;
               const isActive = stepNum === currentStep;
               const Icon = s.icon;
 
