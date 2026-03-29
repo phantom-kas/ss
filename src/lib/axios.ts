@@ -5,8 +5,8 @@ import { useAuthStore } from '@/stores/auth';
 // ---------------------------
 const api = axios.create({
   // baseURL: import.meta.env.VITE_API_BASE_URL,
-  baseURL: '/api',
-  // baseURL: 'https://gc-rest-api.onrender.com/api',
+  // baseURL: '/api',
+  baseURL: 'https://gc-rest-api.onrender.com/api',
   withCredentials: true, // send cookies if using them
 });
 

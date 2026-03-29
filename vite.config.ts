@@ -10,7 +10,10 @@ import tailwindcss from '@tailwindcss/vite'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  
+const isDev = mode === 'development';
+  return {
   plugins: [react(), tsconfigPaths(), tanstackRouter({}), tailwindcss()],
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
@@ -61,7 +64,7 @@ export default defineConfig({
     target: 'esnext',
     outDir: 'build',
   },
-  server: {
+  server: isDev ?{
     port: 3000,
     open: true,
     proxy: {
@@ -71,5 +74,5 @@ export default defineConfig({
         secure:       false,
       },
     },
-  },
-});
+  }:undefined,
+}});
