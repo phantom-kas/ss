@@ -143,7 +143,7 @@ export function SendMoney({ navigateTo, onLogout, prefilledRecipient }: SendMone
           {step === 1 && (
           
 
-            <Step1 setSendData={setSendData} deliveryMethods={deliveryMethods} ghanaianBanks={ghanaianBanks} EXCHANGE_RATE={EXCHANGE_RATE} sendData={sendData} recentRecipients={recentRecipients} handleNext={(e)=>navigate({to:'/send/'+e+'/verify'})} />
+            <Step1 setSendData={setSendData} deliveryMethods={deliveryMethods} ghanaianBanks={ghanaianBanks} EXCHANGE_RATE={EXCHANGE_RATE} sendData={sendData} recentRecipients={recentRecipients} handleNext={(e)=>navigate({to:'/send/'+e+'/verify/kyc'})} />
 
           
           )}

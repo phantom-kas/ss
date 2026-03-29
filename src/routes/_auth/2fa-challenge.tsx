@@ -31,12 +31,18 @@ function LoginTotpChallenge() {
     setIsLoading(true)
     setError('')
     try {
-      const res = await axios.post(
-        api.defaults.baseURL + '/api/2fa/verify-login',
-        { code },
-        { headers: { Authorization: `Bearer ${partialToken}` } }
-      )
 
+
+      // const res = await axios.post(
+      //   api.defaults.baseURL + '/api/2fa/verify-login',
+      //   { code },
+      //   { headers: { Authorization: `Bearer ${partialToken}` } }
+      // )
+fetch('http://localhost:3001/api/2fa/verify-login', {
+  method: 'POST',
+  credentials: 'include',
+   headers: { Authorization: `Bearer ${partialToken}` }
+})
       const { data, accessToken } = res.data
 
       authActions.setPartialToken(null)

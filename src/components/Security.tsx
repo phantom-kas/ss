@@ -46,7 +46,7 @@ export function Security({ navigateTo, onLogout }: SecurityProps) {
     setIsDisabling(true)
     setDisableError("")
     try {
-      await api.post('/api/2fa/disable-totp', { code })
+      await api.post('/2fa/disable-totp', { code })
       authActions.updateUser({ totp_enabled: false })
       setTwoFactorEnabled(false)
       setShowDisableModal(false)

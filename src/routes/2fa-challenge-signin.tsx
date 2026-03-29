@@ -34,7 +34,7 @@ function LoginTotpChallenge() {
   setError('')
   try {
     const res = await axios.post(
-      api.defaults.baseURL + '/api/2fa/verify-login',
+      api.defaults.baseURL + '/2fa/verify-login',
       { code },
       { headers: { Authorization: `Bearer ${partialToken}` } }
     )

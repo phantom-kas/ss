@@ -13,11 +13,11 @@ export interface Setup2FAResponse {
 export const setup2faApi = {
   /** Called when user clicks "Enable 2FA" — generates secret + QR */
   initSetup: () =>
-    api.post<Setup2FAResponse>('/api/2fa/setup').then((r) => r.data),
+    api.post<Setup2FAResponse>('/2fa/setup').then((r) => r.data),
 
   /** Called after user scans QR and enters first code to confirm */
    verifySetup: async (code: string) => {
-    const { data } = await api.post('/api/2fa/verify-setup', { code })
+    const { data } = await api.post('/2fa/verify-setup', { code })
     return data
   },
 

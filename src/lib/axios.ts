@@ -5,8 +5,8 @@ import { useAuthStore } from '@/stores/auth';
 // ---------------------------
 const api = axios.create({
   // baseURL: import.meta.env.VITE_API_BASE_URL,
-  baseURL: 'http://localhost:3001',
-  // baseURL: 'https://gc-rest-api.onrender.com',
+  baseURL: '/api',
+  // baseURL: 'https://gc-rest-api.onrender.com/api',
   withCredentials: true, // send cookies if using them
 });
 
@@ -88,10 +88,10 @@ api.interceptors.response.use(
 
       try {
         // Call refresh endpoint
-        const { data } = await axios.post(
-          `${api.defaults.baseURL}/auth/generate_new_access_token`,
-          {},
-          { withCredentials: true } // send refresh token if in cookie
+        // const { data } = await axios.post(
+        // alert('error')
+        const { data } = await api.post(
+          `auth/generate_new_access_token`,
         );
 
         let accessToken = data.data.accessToken;

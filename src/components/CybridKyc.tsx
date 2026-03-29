@@ -123,6 +123,8 @@ export function CybridKyc({ kycStatus, onVerified, onError }: Props) {
           return;
         }
         try {
+    // alert('s')
+
           const { data: kycData } = await api.get('/cybrid/kyc/status');
           if (kycData.data.kycStatus === 'verified') {
             clearInterval(pollRef.current!);
@@ -249,7 +251,7 @@ export function CybridKyc({ kycStatus, onVerified, onError }: Props) {
           >
             <div
               ref={sdkContainerRef}
-              className={cn("rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 ",sdkMounted ?'min-h-[420px]':'')}
+              className={cn("rounded-xl overflow-hidden ",sdkMounted ?'min-h-[420px]  border border-slate-200 dark:border-slate-700':'')}
             />
           </motion.div>
         )}
