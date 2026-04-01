@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { motion } from "motion/react";
 import api from "@/lib/axios";
 import { showError } from "@/lib/error";
+import { useSendStore } from "@/stores/useSendStore";
 
 export const Route = createFileRoute("/_auth/send/$recipientId/amount")({
   component: RouteComponent,
@@ -33,7 +34,7 @@ function RouteComponent() {
   const { recipientId } = useParams({ from: "/_auth/send/$recipientId/amount" });
   const navigate = useNavigate();
 
-  const [amount, setAmount] = useState("");
+  // const [amount, setAmount] = useState("");
   const [exchangeRate, setExchangeRate] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -46,7 +47,7 @@ function RouteComponent() {
         const s: CybridStatus = data?.data;
         if (!s || s.kycStatus !== "verified" || !s.hasBankAccount) {
           navigate({
-            to: "/send/$recipientId/verify",
+            to: "/send/$recipientId/verify/kyc",
             params: { recipientId },
           });
           return;
@@ -70,8 +71,12 @@ function RouteComponent() {
       }
     })();
   }, []);
+  const setAmount = useSendStore((s) => s.setAmount);
+  const amount          = useSendStore((s) => s.amount);
 
-  const parsedAmount = parseFloat(amount);
+  // const setAmount = useSendStore((s) => amo);
+
+  const parsedAmount = parseFloat(amount+'');
   const isValid = !isNaN(parsedAmount) && parsedAmount > 0;
   const cedisAmount =
     isValid && exchangeRate ? (parsedAmount * exchangeRate).toFixed(2) : null;
@@ -115,6 +120,8 @@ function RouteComponent() {
       </div>
     );
   }
+
+
 
   return (
     <motion.div
@@ -164,7 +171,7 @@ function RouteComponent() {
               placeholder="0"
               className="border-0 bg-transparent p-0 h-auto text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600 focus-visible:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none flex-1"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => {setAmount(Number(e.target.value))}}
             />
           </div>
           <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
@@ -212,9 +219,9 @@ function RouteComponent() {
             <button
               key={qa}
               type="button"
-              onClick={() => setAmount(qa.toString())}
+              onClick={() => setAmount(Number(qa))}
               className={`p-3 sm:p-4 border-2 rounded-xl font-semibold transition-all duration-200 active:scale-95 ${
-                amount === qa.toString()
+                amount === Number(qa.toString())
                   ? "border-blue-600 dark:border-blue-500 bg-blue-600 dark:bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/50"
                   : "border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md"
               }`}

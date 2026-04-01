@@ -33,26 +33,114 @@ interface Props {
 }
 
 export function CybridKyc({ kycStatus, onVerified, onError }: Props) {
-  const [sdkMounted, setSdkMounted]   = useState(false);
-  const [starting, setStarting]       = useState(false);
-  const sdkContainerRef               = useRef<HTMLDivElement>(null);
-  const pollRef                       = useRef<ReturnType<typeof setInterval> | null>(null);
-  const pollStartRef                  = useRef<number | null>(null);
+  const [sdkMounted, setSdkMounted] = useState(false);
+  const [starting, setStarting] = useState(false);
+  const sdkContainerRef = useRef<HTMLDivElement>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollStartRef = useRef<number | null>(null);
 
   const POLL_INTERVAL = 5_000;
-  const POLL_MAX      = 5 * 60_000;
+  const POLL_MAX = 5 * 60_000;
 
   // If already verified on mount, skip immediately
+
+  async function pollKycStatus() {
+    if (verifyingRef.current) return;
+    verifyingRef.current = true;
+
+
+
+
+    pollStartRef.current = Date.now();
+      let l = 0
+
+    pollRef.current = setInterval(async () => {
+
+          l++
+          console.log('polling ', l)
+      
+      if (pollStartRef.current && Date.now() - pollStartRef.current > POLL_MAX) {
+        clearInterval(pollRef.current!);
+        verifyingRef.current = false;
+
+        return;
+      }
+      try {
+        const { data: kycData } = await api.get('/cybrid/kyc/status');
+
+        if (kycData.data.kycStatus === 'verified') {
+// alert('horse 1 1')
+
+          clearInterval(pollRef.current!);
+          verifyingRef.current = false;
+          unmount();
+          setSdkMounted(false);
+          onVerified();
+        }
+      } catch {
+        // keep polling
+      }
+    }, POLL_INTERVAL);
+  }
+
   useEffect(() => {
     if (kycStatus === 'verified') onVerified();
   }, [kycStatus]);
 
+  const verifyingRef = useRef(false);
+  const hasRunRef = useRef(false);
+
+  // useEffect(() => {
+  //   return () => {
+  //     if (pollRef.current) clearInterval(pollRef.current);
+  //     unmount();
+  //   };
+  // }, []);
+
+
+
+
   useEffect(() => {
+    // alert('a')
+
+    if (hasRunRef.current) return;
+    hasRunRef.current = true;
+
+    (async () => {
+      try {
+        const { data } = await api.get('/cybrid/kyc/status');
+        const status = data.data.kycStatus;
+        // alert('as')
+
+        // Already verified → skip
+        if (status === 'verified') {
+          // alert('as')
+
+          onVerified();
+          return;
+        }
+        // If user is mid-process → resume polling
+        if (
+          // status === 'pending' ||
+          // status === 'in_review' ||
+          // status === 'submitted' ||
+          // status === 'unverified'
+          status !== 'verified'
+        ) {
+
+          await pollKycStatus();
+        }
+      } catch {
+        // ignore
+      }
+    })();
+
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
       unmount();
     };
   }, []);
+
 
   function unmount() {
     if (sdkContainerRef.current) sdkContainerRef.current.innerHTML = '';
@@ -86,11 +174,12 @@ export function CybridKyc({ kycStatus, onVerified, onError }: Props) {
       unmount();
       if (!sdkContainerRef.current) {
         alert()
-        return};
+        return
+      };
 
       const el = document.createElement('cybrid-app');
-      (el as any).auth      = tokenData.token;
-      (el as any).config    = {
+      (el as any).auth = tokenData.token;
+      (el as any).config = {
         refreshInterval: 10000,
         routing: false,
         locale: 'en-US',
@@ -115,25 +204,26 @@ export function CybridKyc({ kycStatus, onVerified, onError }: Props) {
       sdkContainerRef.current.appendChild(el);
       setSdkMounted(true);
 
-      // Backup poll in case the SDK event doesn't fire
-      pollStartRef.current = Date.now();
-      pollRef.current = setInterval(async () => {
-        if (pollStartRef.current && Date.now() - pollStartRef.current > POLL_MAX) {
-          clearInterval(pollRef.current!);
-          return;
-        }
-        try {
-    // alert('s')
+      //   // Backup poll in case the SDK event doesn't fire
+      //   pollStartRef.current = Date.now();
+      //   pollRef.current = setInterval(async () => {
+      //     if (pollStartRef.current && Date.now() - pollStartRef.current > POLL_MAX) {
+      //       clearInterval(pollRef.current!);
+      //       return;
+      //     }
+      //     try {
+      // // alert('s')
 
-          const { data: kycData } = await api.get('/cybrid/kyc/status');
-          if (kycData.data.kycStatus === 'verified') {
-            clearInterval(pollRef.current!);
-            unmount();
-            setSdkMounted(false);
-            onVerified();
-          }
-        } catch { /* keep polling */ }
-      }, POLL_INTERVAL);
+      //       const { data: kycData } = await api.get('/cybrid/kyc/status');
+      //       if (kycData.data.kycStatus === 'verified') {
+      //         clearInterval(pollRef.current!);
+      //         unmount();
+      //         setSdkMounted(false);
+      //         onVerified();
+      //       }
+      //     } catch { /* keep polling */ }
+      //   }, POLL_INTERVAL);
+      await pollKycStatus()
     } catch {
       setStarting(false);
       onError?.('Failed to start identity verification. Please try again.');
@@ -143,7 +233,7 @@ export function CybridKyc({ kycStatus, onVerified, onError }: Props) {
   const showStartCard =
     !sdkMounted &&
     (kycStatus === 'unverified' ||
-    kycStatus === 'pending' ||
+      kycStatus === 'pending' ||
       kycStatus === 'not_started' ||
       kycStatus === 'failed' ||
       !kycStatus);
@@ -241,7 +331,7 @@ export function CybridKyc({ kycStatus, onVerified, onError }: Props) {
 
       {/* SDK container — appears right after the card collapses */}
       <AnimatePresence>
-        { (
+        {(
           <motion.div
             key="sdk"
             initial={{ opacity: 0, height: 0 }}
@@ -251,7 +341,7 @@ export function CybridKyc({ kycStatus, onVerified, onError }: Props) {
           >
             <div
               ref={sdkContainerRef}
-              className={cn("rounded-xl overflow-hidden ",sdkMounted ?'min-h-[420px]  border border-slate-200 dark:border-slate-700':'')}
+              className={cn("rounded-xl overflow-hidden ", sdkMounted ? 'min-h-[420px]  border border-slate-200 dark:border-slate-700' : '')}
             />
           </motion.div>
         )}

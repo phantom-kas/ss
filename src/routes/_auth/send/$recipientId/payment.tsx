@@ -19,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { motion } from "motion/react";
 import api from "@/lib/axios";
+import { toast } from "sonner";
+import { useSendStore } from "@/stores/useSendStore";
 
 export const Route = createFileRoute("/_auth/send/$recipientId/payment")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -43,7 +45,9 @@ interface CybridStatus {
 
 function RouteComponent() {
   const { recipientId } = useParams({ from: "/_auth/send/$recipientId/payment" });
-  const { amount } = useSearch({ from: "/_auth/send/$recipientId/payment" });
+  // const { amount } = useSearch({ from: "/_auth/send/$recipientId/payment" });
+  const amount          = useSendStore((s) => s.amount);
+
   const navigate = useNavigate();
 
   const [status, setStatus] = useState<CybridStatus | null>(null);
@@ -55,8 +59,17 @@ function RouteComponent() {
       try {
         const { data } = await api.get("/cybrid/status");
         const s: CybridStatus = data?.data;
-        if (!s || s.kycStatus !== "verified" || !s.hasBankAccount) {
-          navigate({ to: "/send/$recipientId/verify", params: { recipientId } });
+        if (!s || s.kycStatus !== "verified") {
+          toast.error('Your KYC is not done verifying')
+
+          navigate({ to: "/send/$recipientId/verify/kyc", params: { recipientId } });
+          return;
+        }
+
+        if( !s.hasBankAccount)
+        {
+          toast.error('Your bank account is not done verifying')
+          navigate({ to: "/send/$recipientId/verify/bank", params: { recipientId } });
           return;
         }
         if (!amount || amount <= 0) {
@@ -193,7 +206,7 @@ function RouteComponent() {
         <button
           type="button"
           onClick={() =>
-            navigate({ to: "/send/$recipientId/verify", params: { recipientId } })
+            navigate({ to: "/send/$recipientId/verify/bank", params: { recipientId } })
           }
           className="mt-2 text-xs text-blue-600 dark:text-blue-400 hover:underline"
         >

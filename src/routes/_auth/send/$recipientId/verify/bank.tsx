@@ -1,9 +1,16 @@
+/**
+ * Updated _auth.send.$recipientId.verify.bank.tsx
+ * Uses useSendStore to persist the selected bank account and amount
+ * across page navigation so it's available on /payment and /review.
+ */
+
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router';
 import { useState, useEffect } from 'react';
 import { Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'motion/react';
 import { CybridBankLink } from '@/components/CybridBankLink';
+import { useSendStore } from '@/stores/useSendStore';
 import api from '@/lib/axios';
 
 export const Route = createFileRoute('/_auth/send/$recipientId/verify/bank')({
@@ -17,21 +24,26 @@ function RouteComponent() {
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState('');
 
+  // Store actions
+  const setSelectedBankAccount = useSendStore((s) => s.setSelectedBankAccount);
+  const setRecipientId         = useSendStore((s) => s.setRecipientId);
+  const storedAccount          = useSendStore((s) => s.selectedBankAccount);
+
+  // Persist recipientId to store when we land here
+  useEffect(() => {
+    setRecipientId(recipientId);
+  }, [recipientId]);
+
   useEffect(() => {
     (async () => {
       try {
         const { data } = await api.get('/cybrid/status');
         const s = data?.data;
         if (!s) throw new Error('Invalid response');
-
-        // KYC not done — send back
         if (s.kycStatus !== 'verified') {
           navigate({ to: '/send/$recipientId/verify/kyc', params: { recipientId } });
           return;
         }
-
-        // Has verified accounts — stay on this page so user can pick one
-        // (don't auto-skip; the picker is the point of this page)
       } catch (err: any) {
         const code = err.response?.status;
         const msg  = err.response?.data?.message;
@@ -46,12 +58,12 @@ function RouteComponent() {
     })();
   }, []);
 
-  // Called by CybridBankLink when the user clicks Continue with a selected account
-  function onContinue(bankAccountGuid: string) {
+  function onContinue(guid: string, account: any) {
+    // Persist to store — survives page navigation
+    setSelectedBankAccount(account);
     navigate({
-      to: '/send/$recipientId/payment',
-      params:  { recipientId },
-      search:  { bankAccountGuid },
+      to:     '/send/$recipientId/amount',
+      params: { recipientId },
     });
   }
 
@@ -72,10 +84,8 @@ function RouteComponent() {
         </div>
         <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Something went wrong</h3>
         <p className="text-sm text-slate-600 dark:text-slate-400 text-center mb-6 max-w-sm">{error}</p>
-        <Button
-          onClick={() => window.location.reload()}
-          className="bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 h-11 px-8"
-        >
+        <Button onClick={() => window.location.reload()}
+          className="bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 h-11 px-8">
           Try Again
         </Button>
       </div>
@@ -101,6 +111,8 @@ function RouteComponent() {
         </div>
 
         <CybridBankLink
+          // Pass stored selection so the picker pre-highlights it
+          initialSelectedGuid={storedAccount?.guid ?? null}
           onContinue={onContinue}
           onError={(msg) => setError(msg)}
         />
