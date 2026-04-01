@@ -1,5 +1,6 @@
+import { Transactions } from '@/components/TransactionsLists';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Transactions } from '../../../components/Transactions';
+// import { Transactions } from '../../../components/Transactions';
 
 export const Route = createFileRoute('/_auth/transactions/')({
   component: TransactionsRoute,
@@ -23,5 +24,5 @@ function TransactionsRoute() {
     navigate({ to: '/' });
   };
 
-  return <Transactions navigateTo={handleNavigate} onLogout={handleLogout} />;
+  return <Transactions  />;
 }

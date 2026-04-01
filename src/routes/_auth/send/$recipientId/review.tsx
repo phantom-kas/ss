@@ -58,7 +58,7 @@ function RouteComponent() {
     setTransferStatus("Initiating transfer...");
 
     try {
-      const { data } = await api.post("/cybrid/send", {e
+      const { data } = await api.post("/cybrid/send", {
         amount,
         bankAccountGuid:selectedBankAccount?.guid,
         recipientId,
