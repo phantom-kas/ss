@@ -19,6 +19,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import api from '@/lib/axios';
 import { addListener } from 'process';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface SdkTokenData {
   token: string;
@@ -154,13 +155,16 @@ export function CybridKyc({ kycStatus, onVerified, onError }: Props) {
         s.id = id; s.src = src;
         if (type) s.type = type;
         s.onload = () => res();
-        s.onerror = () => rej(new Error(`Failed to load ${src}`));
+        s.onerror = () =>{ rej(new Error(`Failed to load ${src}`)); toast.error('Error starting kyc, Please contact admin') };
         document.head.appendChild(s);
       });
     };
     return add('cybrid-polyfills', '/cybrid-sdk-ui.polyfills.js').then(() =>
       add('cybrid-sdk', '/cybrid-sdk-ui.min.js', 'module')
-    );
+    ).catch(()=>{
+toast.error('Error starting kyc process, Please contact admin') 
+
+    });
   }
 
   async function startKyc() {
@@ -188,6 +192,8 @@ export function CybridKyc({ kycStatus, onVerified, onError }: Props) {
         fiat: 'USD',
         features: ['kyc_identity_verifications'],
         environment: tokenData.environment,
+        authServer:api.defaults.baseURL,
+        apiBase:api.defaults.baseURL+'/cybrid_proxy'
       };
       (el as any).component = 'identity-verification';
 
@@ -204,29 +210,12 @@ export function CybridKyc({ kycStatus, onVerified, onError }: Props) {
       sdkContainerRef.current.appendChild(el);
       setSdkMounted(true);
 
-      //   // Backup poll in case the SDK event doesn't fire
-      //   pollStartRef.current = Date.now();
-      //   pollRef.current = setInterval(async () => {
-      //     if (pollStartRef.current && Date.now() - pollStartRef.current > POLL_MAX) {
-      //       clearInterval(pollRef.current!);
-      //       return;
-      //     }
-      //     try {
-      // // alert('s')
-
-      //       const { data: kycData } = await api.get('/cybrid/kyc/status');
-      //       if (kycData.data.kycStatus === 'verified') {
-      //         clearInterval(pollRef.current!);
-      //         unmount();
-      //         setSdkMounted(false);
-      //         onVerified();
-      //       }
-      //     } catch { /* keep polling */ }
-      //   }, POLL_INTERVAL);
+     
       await pollKycStatus()
     } catch {
       setStarting(false);
       onError?.('Failed to start identity verification. Please try again.');
+      toast.error('Error starting kyc, Please contact admin')
     }
   }
 
@@ -341,15 +330,12 @@ export function CybridKyc({ kycStatus, onVerified, onError }: Props) {
           >
             <div
               ref={sdkContainerRef}
-              className={cn("rounded-xl overflow-hidden ", sdkMounted ? 'min-h-[420px]  border border-slate-200 dark:border-slate-700' : '')}
+              className={cn("rounded-xl overflow-hidden ", sdkMounted ? 'min-h-105  border border-slate-200 dark:border-slate-700' : '')}
             />
           </motion.div>
         )}
 
-        {/* Hidden ref container when SDK is not visible
-        {!sdkMounted && (
-          <div ref={sdkContainerRef} className="hidden" />
-        )} */}
+       
       </AnimatePresence>
     </div>
   );

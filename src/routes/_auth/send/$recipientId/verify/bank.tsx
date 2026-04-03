@@ -1,15 +1,8 @@
-/**
- * Updated _auth.send.$recipientId.verify.bank.tsx
- * Uses useSendStore to persist the selected bank account and amount
- * across page navigation so it's available on /payment and /review.
- */
-
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router';
 import { useState, useEffect } from 'react';
-import { Loader2, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'motion/react';
-import { CybridBankLink } from '@/components/CybridBankLink';
+import { BankLinkFlow } from '@/components/verify/BankLinkFlow';  // ← was CybridBankLink
+import { VerifyHeader, VerifyLoader, VerifyError, VerifyingSpinner } from '@/components/verify/shared';
 import { useSendStore } from '@/stores/useSendStore';
 import api from '@/lib/axios';
 
@@ -21,27 +14,33 @@ function RouteComponent() {
   const { recipientId } = useParams({ from: '/_auth/send/$recipientId/verify/bank' });
   const navigate        = useNavigate();
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState('');
+  const [loading, setLoading]         = useState(true);
+  const [error, setError]             = useState('');
+  const [verifyingBank, setVerifying] = useState(false);
+  const [bankError, setBankError]     = useState('');
 
-  // Store actions
+  // Store
   const setSelectedBankAccount = useSendStore((s) => s.setSelectedBankAccount);
   const setRecipientId         = useSendStore((s) => s.setRecipientId);
   const storedAccount          = useSendStore((s) => s.selectedBankAccount);
 
-  // Persist recipientId to store when we land here
   useEffect(() => {
     setRecipientId(recipientId);
-  }, [recipientId]);
 
-  useEffect(() => {
     (async () => {
       try {
         const { data } = await api.get('/cybrid/status');
         const s = data?.data;
         if (!s) throw new Error('Invalid response');
+
         if (s.kycStatus !== 'verified') {
           navigate({ to: '/send/$recipientId/verify/kyc', params: { recipientId } });
+          return;
+        }
+
+        // Already has verified bank — skip to amount
+        if (s.hasVerifiedBankAccount) {
+          navigate({ to: '/send/$recipientId/amount', params: { recipientId } });
           return;
         }
       } catch (err: any) {
@@ -58,39 +57,33 @@ function RouteComponent() {
     })();
   }, []);
 
-  function onContinue(guid: string, account: any) {
-    // Persist to store — survives page navigation
+  // Called by BankLinkFlow when user selects an account and clicks Continue
+  function handleBankContinue(guid: string, account: any) {
     setSelectedBankAccount(account);
-    navigate({
-      to:     '/send/$recipientId/amount',
-      params: { recipientId },
-    });
+    setVerifying(true);
+
+    // Kick off verification non-blocking (BankLinkFlow already did it,
+    // but call again in case it was skipped for an already-verified account)
+    api.post('/cybrid/verify-bank-account', {}).catch(() => {});
+
+    // Poll until verified then navigate
+    const start = Date.now();
+    const poll  = setInterval(async () => {
+      try {
+        const { data } = await api.get('/cybrid/status');
+        const s = data?.data;
+        if (s?.hasVerifiedBankAccount || Date.now() - start > 90_000) {
+          clearInterval(poll);
+          setVerifying(false);
+          navigate({ to: '/send/$recipientId/amount', params: { recipientId } });
+        }
+      } catch { /* keep polling */ }
+    }, 3_000);
   }
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-4" />
-        <p className="text-sm text-slate-600 dark:text-slate-400">Loading your accounts...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16">
-        <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-6">
-          <AlertCircle className="w-12 h-12 text-red-600 dark:text-red-400" />
-        </div>
-        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Something went wrong</h3>
-        <p className="text-sm text-slate-600 dark:text-slate-400 text-center mb-6 max-w-sm">{error}</p>
-        <Button onClick={() => window.location.reload()}
-          className="bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 h-11 px-8">
-          Try Again
-        </Button>
-      </div>
-    );
-  }
+  if (loading)      return <VerifyLoader />;
+  if (error)        return <VerifyError message={error} onRetry={() => window.location.reload()} />;
+  if (verifyingBank) return <VerifyingSpinner />;
 
   return (
     <AnimatePresence mode="wait">
@@ -101,20 +94,18 @@ function RouteComponent() {
         exit={{ opacity: 0, x: -20 }}
         transition={{ duration: 0.25 }}
       >
-        <div className="mb-4">
-          <h2 className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white mb-1">
-            Choose Payment Account
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-            Select which bank account to fund this transfer from
-          </p>
-        </div>
+        <VerifyHeader
+          title="Link Your Bank Account"
+          subtitle="Connect your US bank account to fund transfers"
+        />
 
-        <CybridBankLink
-          // Pass stored selection so the picker pre-highlights it
+        {/* BankLinkFlow is a drop-in for CybridBankLink — same props */}
+        <BankLinkFlow
           initialSelectedGuid={storedAccount?.guid ?? null}
-          onContinue={onContinue}
-          onError={(msg) => setError(msg)}
+          onContinue={handleBankContinue}
+          onError={(msg) => setBankError(msg)}
+          errorMessage={bankError}
+          onDismissError={() => setBankError('')}
         />
       </motion.div>
     </AnimatePresence>

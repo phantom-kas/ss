@@ -41,7 +41,9 @@ import { Route as AuthSendRecipientIdVerifycopyRouteImport } from './routes/_aut
 import { Route as AuthSendRecipientIdReviewRouteImport } from './routes/_auth/send/$recipientId/review'
 import { Route as AuthSendRecipientIdPaymentRouteImport } from './routes/_auth/send/$recipientId/payment'
 import { Route as AuthSendRecipientIdAmountRouteImport } from './routes/_auth/send/$recipientId/amount'
+import { Route as AuthSendRecipientIdVerifyKycOldRouteImport } from './routes/_auth/send/$recipientId/verify/kycOld'
 import { Route as AuthSendRecipientIdVerifyKycRouteImport } from './routes/_auth/send/$recipientId/verify/kyc'
+import { Route as AuthSendRecipientIdVerifyBankOldRouteImport } from './routes/_auth/send/$recipientId/verify/bankOld'
 import { Route as AuthSendRecipientIdVerifyBankRouteImport } from './routes/_auth/send/$recipientId/verify/bank'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
@@ -210,10 +212,22 @@ const AuthSendRecipientIdAmountRoute =
     path: '/amount',
     getParentRoute: () => AuthSendRecipientIdRoute,
   } as any)
+const AuthSendRecipientIdVerifyKycOldRoute =
+  AuthSendRecipientIdVerifyKycOldRouteImport.update({
+    id: '/verify/kycOld',
+    path: '/verify/kycOld',
+    getParentRoute: () => AuthSendRecipientIdRoute,
+  } as any)
 const AuthSendRecipientIdVerifyKycRoute =
   AuthSendRecipientIdVerifyKycRouteImport.update({
     id: '/verify/kyc',
     path: '/verify/kyc',
+    getParentRoute: () => AuthSendRecipientIdRoute,
+  } as any)
+const AuthSendRecipientIdVerifyBankOldRoute =
+  AuthSendRecipientIdVerifyBankOldRouteImport.update({
+    id: '/verify/bankOld',
+    path: '/verify/bankOld',
     getParentRoute: () => AuthSendRecipientIdRoute,
   } as any)
 const AuthSendRecipientIdVerifyBankRoute =
@@ -256,7 +270,9 @@ export interface FileRoutesByFullPath {
   '/send/$recipientId/review': typeof AuthSendRecipientIdReviewRoute
   '/send/$recipientId/verify copy': typeof AuthSendRecipientIdVerifycopyRoute
   '/send/$recipientId/verify/bank': typeof AuthSendRecipientIdVerifyBankRoute
+  '/send/$recipientId/verify/bankOld': typeof AuthSendRecipientIdVerifyBankOldRoute
   '/send/$recipientId/verify/kyc': typeof AuthSendRecipientIdVerifyKycRoute
+  '/send/$recipientId/verify/kycOld': typeof AuthSendRecipientIdVerifyKycOldRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -290,7 +306,9 @@ export interface FileRoutesByTo {
   '/send/$recipientId/review': typeof AuthSendRecipientIdReviewRoute
   '/send/$recipientId/verify copy': typeof AuthSendRecipientIdVerifycopyRoute
   '/send/$recipientId/verify/bank': typeof AuthSendRecipientIdVerifyBankRoute
+  '/send/$recipientId/verify/bankOld': typeof AuthSendRecipientIdVerifyBankOldRoute
   '/send/$recipientId/verify/kyc': typeof AuthSendRecipientIdVerifyKycRoute
+  '/send/$recipientId/verify/kycOld': typeof AuthSendRecipientIdVerifyKycOldRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -327,7 +345,9 @@ export interface FileRoutesById {
   '/_auth/send/$recipientId/review': typeof AuthSendRecipientIdReviewRoute
   '/_auth/send/$recipientId/verify copy': typeof AuthSendRecipientIdVerifycopyRoute
   '/_auth/send/$recipientId/verify/bank': typeof AuthSendRecipientIdVerifyBankRoute
+  '/_auth/send/$recipientId/verify/bankOld': typeof AuthSendRecipientIdVerifyBankOldRoute
   '/_auth/send/$recipientId/verify/kyc': typeof AuthSendRecipientIdVerifyKycRoute
+  '/_auth/send/$recipientId/verify/kycOld': typeof AuthSendRecipientIdVerifyKycOldRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -364,7 +384,9 @@ export interface FileRouteTypes {
     | '/send/$recipientId/review'
     | '/send/$recipientId/verify copy'
     | '/send/$recipientId/verify/bank'
+    | '/send/$recipientId/verify/bankOld'
     | '/send/$recipientId/verify/kyc'
+    | '/send/$recipientId/verify/kycOld'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -398,7 +420,9 @@ export interface FileRouteTypes {
     | '/send/$recipientId/review'
     | '/send/$recipientId/verify copy'
     | '/send/$recipientId/verify/bank'
+    | '/send/$recipientId/verify/bankOld'
     | '/send/$recipientId/verify/kyc'
+    | '/send/$recipientId/verify/kycOld'
   id:
     | '__root__'
     | '/'
@@ -434,7 +458,9 @@ export interface FileRouteTypes {
     | '/_auth/send/$recipientId/review'
     | '/_auth/send/$recipientId/verify copy'
     | '/_auth/send/$recipientId/verify/bank'
+    | '/_auth/send/$recipientId/verify/bankOld'
     | '/_auth/send/$recipientId/verify/kyc'
+    | '/_auth/send/$recipientId/verify/kycOld'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -677,11 +703,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSendRecipientIdAmountRouteImport
       parentRoute: typeof AuthSendRecipientIdRoute
     }
+    '/_auth/send/$recipientId/verify/kycOld': {
+      id: '/_auth/send/$recipientId/verify/kycOld'
+      path: '/verify/kycOld'
+      fullPath: '/send/$recipientId/verify/kycOld'
+      preLoaderRoute: typeof AuthSendRecipientIdVerifyKycOldRouteImport
+      parentRoute: typeof AuthSendRecipientIdRoute
+    }
     '/_auth/send/$recipientId/verify/kyc': {
       id: '/_auth/send/$recipientId/verify/kyc'
       path: '/verify/kyc'
       fullPath: '/send/$recipientId/verify/kyc'
       preLoaderRoute: typeof AuthSendRecipientIdVerifyKycRouteImport
+      parentRoute: typeof AuthSendRecipientIdRoute
+    }
+    '/_auth/send/$recipientId/verify/bankOld': {
+      id: '/_auth/send/$recipientId/verify/bankOld'
+      path: '/verify/bankOld'
+      fullPath: '/send/$recipientId/verify/bankOld'
+      preLoaderRoute: typeof AuthSendRecipientIdVerifyBankOldRouteImport
       parentRoute: typeof AuthSendRecipientIdRoute
     }
     '/_auth/send/$recipientId/verify/bank': {
@@ -700,7 +740,9 @@ interface AuthSendRecipientIdRouteChildren {
   AuthSendRecipientIdReviewRoute: typeof AuthSendRecipientIdReviewRoute
   AuthSendRecipientIdVerifycopyRoute: typeof AuthSendRecipientIdVerifycopyRoute
   AuthSendRecipientIdVerifyBankRoute: typeof AuthSendRecipientIdVerifyBankRoute
+  AuthSendRecipientIdVerifyBankOldRoute: typeof AuthSendRecipientIdVerifyBankOldRoute
   AuthSendRecipientIdVerifyKycRoute: typeof AuthSendRecipientIdVerifyKycRoute
+  AuthSendRecipientIdVerifyKycOldRoute: typeof AuthSendRecipientIdVerifyKycOldRoute
 }
 
 const AuthSendRecipientIdRouteChildren: AuthSendRecipientIdRouteChildren = {
@@ -709,7 +751,9 @@ const AuthSendRecipientIdRouteChildren: AuthSendRecipientIdRouteChildren = {
   AuthSendRecipientIdReviewRoute: AuthSendRecipientIdReviewRoute,
   AuthSendRecipientIdVerifycopyRoute: AuthSendRecipientIdVerifycopyRoute,
   AuthSendRecipientIdVerifyBankRoute: AuthSendRecipientIdVerifyBankRoute,
+  AuthSendRecipientIdVerifyBankOldRoute: AuthSendRecipientIdVerifyBankOldRoute,
   AuthSendRecipientIdVerifyKycRoute: AuthSendRecipientIdVerifyKycRoute,
+  AuthSendRecipientIdVerifyKycOldRoute: AuthSendRecipientIdVerifyKycOldRoute,
 }
 
 const AuthSendRecipientIdRouteWithChildren =
