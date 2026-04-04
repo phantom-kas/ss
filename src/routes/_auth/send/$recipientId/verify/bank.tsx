@@ -39,10 +39,10 @@ function RouteComponent() {
         }
 
         // Already has verified bank — skip to amount
-        if (s.hasVerifiedBankAccount) {
-          navigate({ to: '/send/$recipientId/amount', params: { recipientId } });
-          return;
-        }
+        // if (s.hasVerifiedBankAccount) {
+        //   navigate({ to: '/send/$recipientId/amount', params: { recipientId } });
+        //   return;
+        // }
       } catch (err: any) {
         const code = err.response?.status;
         const msg  = err.response?.data?.message;
