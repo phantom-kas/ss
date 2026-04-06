@@ -1,12 +1,24 @@
-import axios from 'axios';
-import { useAuthStore } from '@/stores/auth';
+import axios from "axios";
+import { useAuthStore } from "@/stores/auth";
 // ---------------------------
 // Config
 // ---------------------------
+
+declare module "axios" {
+  export interface AxiosRequestConfig {
+    idempotent?: boolean;
+    idempotencyKey?: string;
+  }
+}
+
+const generateIdempotencyKey = () => {
+  return crypto.randomUUID(); // browser-safe
+};
+
 const api = axios.create({
   // baseURL: import.meta.env.VITE_API_BASE_URL,
   // baseURL: '/api',
-  baseURL: 'https://gc-rest-api.onrender.com/api',
+  baseURL: "https://gc-rest-api.onrender.com/api",
   withCredentials: true, // send cookies if using them
 });
 
@@ -43,16 +55,25 @@ export function redirectToLogin() {
 // ---------------------------
 api.interceptors.request.use(
   async (config) => {
-    await waitForHydration()
+    await waitForHydration();
     const token = useAuthStore.getState().token;
-    console.log('--------- ' + token)
+    console.log("--------- " + token);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
+    if (config.idempotent) {
+      // reuse existing key if retry
+      if (!config.idempotencyKey) {
+        config.idempotencyKey = generateIdempotencyKey();
+      }
+
+      config.headers["Idempotency-Key"] = config.idempotencyKey;
+    }
+
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // ---------------------------
@@ -62,22 +83,24 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    console.log('originalRequest', originalRequest)
-    console.log(error)
-    if (originalRequest.url == '/auth/login' || originalRequest.url == '/auth/reset-password') {
+    console.log("originalRequest", originalRequest);
+    console.log(error);
+    if (
+      originalRequest.url == "/auth/login" ||
+      originalRequest.url == "/auth/reset-password"
+    ) {
       // alert('ss')
       return Promise.reject(error);
     }
     // Only try refresh once per request
     if (error.response?.status === 401 && !originalRequest._retry) {
-
       if (isRefreshing) {
         // Queue request until refresh finishes
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
-            originalRequest.headers['Authorization'] = `Bearer ${token}`;
+            originalRequest.headers["Authorization"] = `Bearer ${token}`;
             return api(originalRequest);
           })
           .catch((err) => Promise.reject(err));
@@ -90,15 +113,25 @@ api.interceptors.response.use(
         // Call refresh endpoint
         // const { data } = await axios.post(
         // alert('error')
-        const { data } = await api.post(
-          `auth/generate_new_access_token`,
-        );
+        const { data } = await api.post(`auth/generate_new_access_token`);
 
         let accessToken = data.data.accessToken;
         // alert(accessToken)
         useAuthStore.setState({ token: accessToken });
         // Update original request
-        originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+        // originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+
+        originalRequest.headers = {
+          ...originalRequest.headers,
+          Authorization: `Bearer ${accessToken}`,
+        };
+
+        // ✅ preserve idempotency key
+        if (originalRequest.idempotencyKey) {
+          originalRequest.headers["Idempotency-Key"] =
+            originalRequest.idempotencyKey;
+        }
+
         processQueue(null, accessToken);
         return api(originalRequest);
       } catch (err) {
@@ -113,7 +146,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
@@ -121,8 +154,6 @@ export default api;
 // ---------------------------
 // Optional helper to set token manually (after login)
 // ---------------------------
-
-
 
 const waitForHydration = () => {
   return new Promise<void>((resolve) => {

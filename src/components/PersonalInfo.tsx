@@ -6,6 +6,7 @@ import { Label } from './ui/label';
 import { Card } from './ui/card';
 import { AppLayout } from './AppLayout';
 import type { Page } from '../App';
+import api from '@/lib/axios';
 
 interface PersonalInfoProps {
   navigateTo: (page: Page) => void;
@@ -50,11 +51,11 @@ export function PersonalInfo({ navigateTo, onLogout }: PersonalInfoProps) {
           </div>
           {!isEditing ? (
             <Button
-              onClick={() => setIsEditing(true)}
+              onClick={() =>{ api.post('/users/idenpotency',{gun:true},{idempotent:true}); setIsEditing(true)}}
               className="bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 h-9 sm:h-10 text-xs sm:text-sm"
             >
               <Edit3 className="w-4 h-4 mr-2" />
-              Edit Profile
+              Edit Profile 
             </Button>
           ) : (
             <div className="flex gap-2">

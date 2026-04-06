@@ -62,7 +62,7 @@ function RouteComponent() {
         amount,
         bankAccountGuid:selectedBankAccount?.guid,
         recipientId,
-      });
+      },{ idempotent: true });
 
 
 
