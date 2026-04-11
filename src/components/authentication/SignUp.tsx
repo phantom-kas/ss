@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Star, Eye, EyeOff, Mail, Lock, User, Globe, Zap, ArrowLeft } from 'lucide-react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Card } from './ui/card';
-import type { Page } from '../App';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Card } from '../ui/card';
+import type { Page } from '../../App';
 import logo from 'figma:asset/872c19024a848c86be2cfb9320e9ce2d33228284.png';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { LoadingButton } from './Elements/Button';
+import { LoadingButton } from '../Elements/Button';
 import api from '@/lib/axios';
 // import { showApiError } from '@/lib/error';
 import { showError } from '@/lib/error';
 import { Link } from '@tanstack/react-router';
-import { GoogleSignInButton } from './Elements/GoogleAuth';
+import { GoogleSignInButton } from '../Elements/GoogleAuth';
+import AuthContainer from './AuthContainer';
 // import {toast} from ''
 interface SignUpProps {
   navigateTo: (page: Page) => void;
@@ -83,7 +84,7 @@ export function SignUp({ navigateTo, onSignUp }: SignUpProps) {
         <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-slate-400" />
       </button>
 
-      <Card className="w-full max-w-md p-5 shadow-xl dark:bg-slate-800 dark:border-slate-700">
+      <AuthContainer>
         <div className="text-center mb-4">
           <div className="flex items-center justify-center mb-2">
             <img src={logo} alt="StableSend" className="h-11 sm:h-12" />
@@ -199,7 +200,7 @@ export function SignUp({ navigateTo, onSignUp }: SignUpProps) {
         <p className="text-center text-slate-500 dark:text-slate-400 text-xs mt-3">
           By signing up, you agree to our Terms & Privacy Policy
         </p>
-      </Card>
+      </AuthContainer>
     </div>
   );
 }

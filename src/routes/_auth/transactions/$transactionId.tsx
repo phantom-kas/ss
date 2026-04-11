@@ -11,6 +11,7 @@ function TransactionDetailRoute() {
   const transaction = (location.state as any)?.transaction || null;
 
   const handleNavigate = (page: string) => {
+    
     if (page === 'transactions') {
       navigate({ to: '/transactions' });
     } else if (page === 'dashboard') {

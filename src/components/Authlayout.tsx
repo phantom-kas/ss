@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import logo from 'figma:asset/872c19024a848c86be2cfb9320e9ce2d33228284.png'
 import { useNavigate } from "@tanstack/react-router"
+import AuthContainer from "./authentication/AuthContainer"
 
 interface AuthLayoutProps {
   title: string
@@ -42,7 +43,7 @@ export function AuthLayout({
         </button>
       )}
 
-      <Card className="w-full max-w-md p-6 shadow-xl dark:bg-slate-800 dark:border-slate-700">
+      <AuthContainer>
         {/* Logo + heading */}
         <div className="text-center mb-6">
           <div className="flex items-center justify-center mb-3">
@@ -63,7 +64,7 @@ export function AuthLayout({
             {footer}
           </p>
         )}
-      </Card>
+      </AuthContainer>
     </div>
   )
 }

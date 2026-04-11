@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { motion, AnimatePresence } from "motion/react";
 import api from "@/lib/axios";
-import { useSendStore } from "@/stores/useSendStore";
+import { TotpGate } from "@/components/TotpGate";
 
 export const Route = createFileRoute("/_auth/send/$recipientId/review")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -27,8 +27,8 @@ export const Route = createFileRoute("/_auth/send/$recipientId/review")({
 type ReviewStep = "review" | "processing" | "success" | "error";
 
 function RouteComponent() {
-  // const { recipientId } = useParams({ from: "/_auth/send/$recipientId/review" });
-  // const { amount } = useSearch({ from: "/_auth/send/$recipientId/review" });
+  const { recipientId } = useParams({ from: "/_auth/send/$recipientId/review" });
+  const { amount } = useSearch({ from: "/_auth/send/$recipientId/review" });
   const navigate = useNavigate();
 
   const [step, setStep] = useState<ReviewStep>("review");
@@ -50,22 +50,17 @@ function RouteComponent() {
       if (transferPollRef.current) clearInterval(transferPollRef.current);
     };
   }, []);
-  const amount = useSendStore((s) => s.amount);
-  const selectedBankAccount = useSendStore((s) => s.selectedBankAccount);
-  const recipientId = useSendStore((s) => s.recipientId);
-  async function handleSend() {
+
+  async function handleSend(totpCode?: string) {
     setStep("processing");
     setTransferStatus("Initiating transfer...");
 
     try {
       const { data } = await api.post("/cybrid/send", {
         amount,
-        bankAccountGuid:selectedBankAccount?.guid,
         recipientId,
-      },{ idempotent: true });
-
-
-
+        ...(totpCode ? { totpCode } : {}),
+      });
       const tid = data.data.transferId;
       setTransferStatus("Funding in progress...");
 
@@ -102,7 +97,7 @@ function RouteComponent() {
 
       if (isUnverified || isNoBankAccount) {
         // Send them back to verify to re-link / re-verify bank
-        navigate({ to: "/send/$recipientId/verify/kyc", params: { recipientId } });
+        navigate({ to: "/send/$recipientId/verify", params: { recipientId } });
       } else {
         setErrorMessage(msg);
         setStep("error");
@@ -202,12 +197,16 @@ function RouteComponent() {
             >
               <ArrowLeft className="w-4 h-4" />
             </Button>
-            <Button
-              className="flex-1 h-12 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-base font-semibold shadow-lg"
-              onClick={handleSend}
-            >
-              Confirm &amp; Send <CheckCircle2 className="w-5 h-5 ml-2" />
-            </Button>
+            <TotpGate onConfirm={handleSend}>
+              {(trigger) => (
+                <Button
+                  className="flex-1 h-12 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-base font-semibold shadow-lg"
+                  onClick={trigger}
+                >
+                  Confirm &amp; Send <CheckCircle2 className="w-5 h-5 ml-2" />
+                </Button>
+              )}
+            </TotpGate>
           </div>
         </motion.div>
       )}
@@ -367,12 +366,13 @@ function TransferStepIndicator({
         <div className="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 flex-shrink-0" />
       )}
       <span
-        className={`text-sm ${done
+        className={`text-sm ${
+          done
             ? "text-emerald-600 dark:text-emerald-400 font-medium"
             : active
               ? "text-blue-600 dark:text-blue-400 font-medium"
               : "text-slate-400 dark:text-slate-500"
-          }`}
+        }`}
       >
         {label}
       </span>
