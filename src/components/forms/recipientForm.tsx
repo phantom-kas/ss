@@ -68,7 +68,7 @@ setLoading(true)
   };
 
   return (
-    <Card className="p-3 sm:p-5 border-2 dark:bg-slate-800 dark:border-slate-700">
+    <Card className="p-3 sm:p-5 border-2 dark:bg-slate-800 dark:border-slate-700 border-slate-300">
       <h3 className="text-sm sm:text-base font-bold mb-4 flex items-center gap-2">
         <User className="w-4 h-4 text-blue-600" />
         Recipient Details

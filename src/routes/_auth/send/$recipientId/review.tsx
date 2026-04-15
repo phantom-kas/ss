@@ -145,7 +145,7 @@ function RouteComponent() {
           </Card>
 
           {/* Transfer breakdown */}
-          <Card className="p-4 mb-4 dark:bg-slate-800 dark:border-slate-700">
+          <Card className="p-4 mb-4 dark:bg-slate-800 dark:border-slate-700 border-slate-300">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3">
               Transfer Details
             </h3>
@@ -193,7 +193,7 @@ function RouteComponent() {
                   search: { amount },
                 })
               }
-              className="h-12 px-5 dark:border-slate-700 dark:hover:bg-slate-800 border-2"
+              className="h-12 px-5 dark:border-slate-700 border-slate-300  dark:hover:bg-slate-800 border-2"
             >
               <ArrowLeft className="w-4 h-4" />
             </Button>
@@ -230,7 +230,7 @@ function RouteComponent() {
             {transferStatus}
           </p>
 
-          <Card className="p-4 w-full max-w-sm bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
+          <Card className="p-4 w-full max-w-sm bg-slate-50 dark:bg-slate-800 dark:border-slate-700 border-slate-300">
             <div className="space-y-3">
               <TransferStepIndicator
                 label="Initiating transfer"
@@ -295,7 +295,7 @@ function RouteComponent() {
             <Button
               variant="outline"
               onClick={goToDashboard}
-              className="flex-1 h-11 dark:border-slate-700 dark:hover:bg-slate-800"
+              className="flex-1 h-11 dark:border-slate-700 dark:hover:bg-slate-800 border-slate-300"
             >
               Go to Dashboard
             </Button>
@@ -325,7 +325,7 @@ function RouteComponent() {
             <Button
               variant="outline"
               onClick={() => setStep("review")}
-              className="h-11 px-6 dark:border-slate-700 dark:hover:bg-slate-800 border-2"
+              className="h-11 px-6 dark:border-slate-700 dark:hover:bg-slate-800 border-2 border-slate-300"
             >
               <ArrowLeft className="w-4 h-4 mr-2" /> Back
             </Button>
