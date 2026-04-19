@@ -223,7 +223,7 @@ function RouteComponent() {
               className={`p-3 sm:p-4 border-2 rounded-xl font-semibold transition-all duration-200 active:scale-95 ${
                 amount === Number(qa.toString())
                   ? "border-blue-600 dark:border-blue-500 bg-blue-600 dark:bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/50"
-                  : "border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md"
+                  : "border-slate-200 dark:border-slate-700   text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md"
               }`}
             >
               <div className="text-sm sm:text-base">${qa}</div>

@@ -1,6 +1,7 @@
 import { User } from "@/types/types";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { usePusherStore } from "./pusher";
 
 type AuthState = {
   user: User | null;
@@ -76,13 +77,16 @@ export const authActions = {
     })),
 
   logout: () =>
+    {
+      usePusherStore.getState().disconnect()
     useAuthStore.setState((state) => ({
       ...state,
       user: null,
       token: null,
       partialToken: null,
       isAuthenticated: false,
-    })),
+    }))
+  },
 
   updateUser: (data: Partial<User>) =>
     useAuthStore.setState((state) => ({

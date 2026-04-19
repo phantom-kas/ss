@@ -32,6 +32,7 @@ export function AuthLayout({
     }
   }
 
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 bg-linear-to-br from-blue-50 via-emerald-50/30 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       {showBack && (

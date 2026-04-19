@@ -8,6 +8,7 @@ import api from '@/lib/axios'
 import { showError } from '@/lib/error'
 import axios from 'axios'
 import { toast } from 'sonner'
+import { usePusherStore } from '@/stores/pusher'
 
 export const Route = createFileRoute('/2fa-challenge-signin')({
   component: RouteComponent,
@@ -40,6 +41,7 @@ function LoginTotpChallenge() {
     )
 
     const { data, accessToken } = res.data
+    usePusherStore.getState().connect(data.public_id, accessToken)
 
     authActions.setPartialToken(null)
     authActions.login(data, accessToken)

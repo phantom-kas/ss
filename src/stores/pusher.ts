@@ -17,7 +17,7 @@
 
 import Pusher, { Channel } from 'pusher-js'
 import { create } from 'zustand'
-
+import api from '@/lib/axios'
 // ── Types ──────────────────────────────────────────────────────────────────
 
 type EventCallback = (data: any) => void
@@ -52,15 +52,15 @@ export const usePusherStore = create<PusherState>((set, get) => ({
     const existing = get()
     if (existing.pusher && existing.connected) return
 
-    const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY as string, {
-      cluster: import.meta.env.VITE_PUSHER_CLUSTER as string,
+    const pusher = new Pusher('ac77fc9658ba8d620f08' as string, {
+      cluster: 'eu'as string,
 
       // Private channel auth — sends POST to your backend with socket_id + channel_name.
       // Your backend calls pusher.authorizeChannel() and returns the signed token.
       // The Authorization header carries the user's JWT so your backend knows who they are.
       channelAuthorization: {
         transport: 'ajax',
-        endpoint:  `${import.meta.env.VITE_API_URL ?? 'http://localhost:3001/api'}/pusher/auth`,
+        endpoint:  `${api.defaults.baseURL}/pusher/auth`,
         headers: {
           Authorization: `Bearer ${authToken}`,
         },

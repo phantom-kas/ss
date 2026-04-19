@@ -6,6 +6,7 @@ import api from '@/lib/axios'
 import { showError } from '@/lib/error'
 import axios from 'axios'
 import { toast } from 'sonner'
+import { usePusherStore } from '@/stores/pusher'
 
 export const Route = createFileRoute('/_auth/2fa-challenge')({
   component: RouteComponent,
@@ -52,6 +53,7 @@ fetch('http://localhost:3001/api/2fa/verify-login', {
         navigate({ to: '/onboarding' })
         return
       }
+    usePusherStore.getState().connect(data.public_id, accessToken)
 
       navigate({ to: '/dashboard' })
       toast.success('Login success')

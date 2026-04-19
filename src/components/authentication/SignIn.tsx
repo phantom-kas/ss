@@ -15,6 +15,7 @@ import { LoadingButton } from '../Elements/Button';
 import { authActions, useAuthStore } from '@/stores/auth';
 import { GoogleSignInButton } from '../Elements/GoogleAuth';
 import AuthContainer from './AuthContainer';
+import { usePusherStore } from '@/stores/pusher';
 
 interface SignInProps {
   navigateTo: (page: Page) => void;
@@ -74,6 +75,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     }
 
     // Full login
+    usePusherStore.getState().connect(data.public_id, accessToken)
     authActions.login(data, accessToken)
 
     if (!data.done_onboarding) {
