@@ -12,6 +12,8 @@ import {
 import type { Page } from '../App';
 import logo from 'figma:asset/872c19024a848c86be2cfb9320e9ce2d33228284.png';
 import { Link } from '@tanstack/react-router';
+import { authActions, useAuthStore } from '@/stores/auth';
+import { usePusherStore } from '@/stores/pusher';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -72,6 +74,15 @@ export function AppLayout({ children, navigateTo = () => { }, currentPage, onLog
     { id: 'transactions', label: 'Transactions', to: '/transactions', page: 'transactions' as Page },
     { id: 'support', label: 'Support', to: '/support', page: 'support' as Page },
   ];
+
+useEffect(()=>{
+
+  const pid = useAuthStore?.getState()?.user?.public_id;
+if(!pid)return
+
+// alert('connet oush')
+    usePusherStore.getState().connect(useAuthStore?.getState()?.user?.public_id, useAuthStore.getState().token)
+},[])
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 md:py-16">
@@ -135,7 +146,7 @@ export function AppLayout({ children, navigateTo = () => { }, currentPage, onLog
                     Settings
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={onLogout}>
+                  <DropdownMenuItem onClick={()=>{authActions.logout() ;onLogout()}}>
                     <LogOut className="w-4 h-4 mr-2" />
                     Logout
                   </DropdownMenuItem>

@@ -275,7 +275,7 @@ const fetchRecipientById = async (id: string) => {
 
       {(sendData.recipientPhone.length >= 10 ||
         (sendData.recipientAccount.length >= 10 && sendData.recipientBank)) && (
-        <Card className="p-3 sm:p-5 mb-3 sm:mb-5 dark:bg-slate-800 dark:border-slate-700 border-2">
+        <Card className="p-3 sm:p-5 mb-3 sm:mb-5 dark:bg-slate-800 dark:border-slate-700 border-slate-300 border-2">
           {" "}
           <motion.div
           key={sendData.recipientId}

@@ -22,7 +22,7 @@ export function GoogleSignInButton() {
     <div className="mb-4">
       <Button
         variant="outline"
-        className="w-full h-9 text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600 flex items-center justify-center space-x-2"
+        className="w-full h-9 text-sm dark:bg-slate-700 border-slate-300 dark:border-slate-600 dark:text-white dark:hover:bg-slate-600 flex items-center justify-center space-x-2"
         type="button"
         onClick={handleGoogleSignIn}
       >

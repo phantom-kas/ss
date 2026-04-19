@@ -148,7 +148,7 @@ function RouteComponent() {
       </div>
 
       {/* Amount summary pill */}
-      <div className="flex items-center justify-between bg-slate-100 dark:bg-slate-800 rounded-xl px-4 py-3 mb-5 border border-slate-200 dark:border-slate-700">
+      <div className="flex items-center border-slate-300 justify-between bg-slate-100 dark:bg-slate-800 rounded-xl px-4 py-3 mb-5 border border-slate-200 dark:border-slate-700">
         <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
           Sending
         </span>
@@ -215,7 +215,7 @@ function RouteComponent() {
       </div>
 
       {/* Transfer method info */}
-      <Card className="p-4 mb-5 bg-slate-50 dark:bg-slate-800/60 dark:border-slate-700">
+      <Card className="p-4 mb-5 bg-slate-50 dark:bg-slate-800/60 dark:border-slate-700 border-slate-300">
         <h3 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-3">
           Transfer Details
         </h3>
@@ -250,7 +250,7 @@ function RouteComponent() {
         <Button
           variant="outline"
           onClick={goBack}
-          className="h-12 px-5 dark:border-slate-700 dark:hover:bg-slate-800 border-2"
+          className="h-12 px-5 dark:border-slate-700 dark:hover:bg-slate-800 border-2 border-slate-300"
         >
           <ArrowLeft className="w-4 h-4" />
         </Button>

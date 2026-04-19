@@ -11,6 +11,7 @@ import logo from "figma:asset/872c19024a848c86be2cfb9320e9ce2d33228284.png";
 import api from "@/lib/axios";
 import { useAuthStore } from "@/stores/auth";
 import { showError } from "@/lib/error";
+import AuthContainer from "./AuthContainer";
 
 export function ResetPassword() {
   const searchParams = useSearch({ from: '/password-reset' }) as any;
@@ -68,7 +69,7 @@ export function ResetPassword() {
         <ArrowLeft className="w-5 h-5" />
       </Button>
 
-      <Card className="w-full max-w-md p-6 shadow-xl dark:bg-slate-800 dark:border-slate-700">
+      <AuthContainer>
         <div className="text-center mb-6">
           <img src={logo} alt="StableSend" className="h-12 mx-auto mb-3" />
           <h2 className="text-xl text-slate-900 dark:text-white mb-1">
@@ -124,7 +125,7 @@ export function ResetPassword() {
             Reset Password
           </LoadingButton>
         </form>
-      </Card>
+      </AuthContainer>
     </div>
   );
 }

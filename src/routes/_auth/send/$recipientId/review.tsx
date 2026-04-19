@@ -15,7 +15,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { motion, AnimatePresence } from "motion/react";
 import api from "@/lib/axios";
-import { useSendStore } from "@/stores/useSendStore";
+import { TotpGate } from "@/components/TotpGate";
+import { usePusherEvent } from "@/stores/pusher";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_auth/send/$recipientId/review")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -27,88 +29,191 @@ export const Route = createFileRoute("/_auth/send/$recipientId/review")({
 type ReviewStep = "review" | "processing" | "success" | "error";
 
 function RouteComponent() {
-  // const { recipientId } = useParams({ from: "/_auth/send/$recipientId/review" });
-  // const { amount } = useSearch({ from: "/_auth/send/$recipientId/review" });
-  const navigate = useNavigate();
+  const { recipientId } = useParams({ from: "/_auth/send/$recipientId/review" });
+  const { amount }      = useSearch({ from: "/_auth/send/$recipientId/review" });
+  const navigate        = useNavigate();
 
-  const [step, setStep] = useState<ReviewStep>("review");
+  const [step, setStep]                     = useState<ReviewStep>("review");
   const [transferStatus, setTransferStatus] = useState("Initiating transfer...");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage]     = useState("");
 
-  const transferPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // ── Refs (not state) for things read inside callbacks ────────
+  //
+  // Why refs and not state?
+  // setInterval callbacks and usePusherEvent handlers are closures —
+  // they capture the value of variables at the time they are created.
+  // State updates are async, so a closure created at render time will
+  // forever see the initial value (undefined) even after setState runs.
+  //
+  // A ref is a plain mutable object. Writing to .current is synchronous
+  // and reading .current always returns the latest value, even inside
+  // a stale closure. This is the standard React pattern for this case.
 
-  // Guard: if no amount, send back
+  /** The transferId returned from POST /cybrid/send — set synchronously */
+  const transactionIdRef = useRef<string | null>(null)
+
+  /** True once we've reached a terminal state (completed/failed) */
+  const isTerminalRef    = useRef(false)
+
+  /** The 20s initial delay timer */
+  const initialDelayRef  = useRef<ReturnType<typeof setTimeout>  | null>(null)
+
+  /** The repeating 20s poll interval */
+  const transferPollRef  = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Guard: no amount → back to amount page
   useEffect(() => {
     if (!amount || amount <= 0) {
       navigate({ to: "/send/$recipientId/amount", params: { recipientId } });
     }
   }, []);
 
-  // Cleanup on unmount
+  // Clean up both timers on unmount so we don't leak intervals
   useEffect(() => {
     return () => {
-      if (transferPollRef.current) clearInterval(transferPollRef.current);
+      if (transferPollRef.current) clearInterval(transferPollRef.current)
+      if (initialDelayRef.current) clearTimeout(initialDelayRef.current)
     };
   }, []);
-  const amount = useSendStore((s) => s.amount);
-  const selectedBankAccount = useSendStore((s) => s.selectedBankAccount);
-  const recipientId = useSendStore((s) => s.recipientId);
-  async function handleSend() {
+
+  // ── Stop all polling (called when a terminal state is reached) ──
+
+  function stopPolling() {
+    if (transferPollRef.current) { clearInterval(transferPollRef.current); transferPollRef.current = null }
+    if (initialDelayRef.current) { clearTimeout(initialDelayRef.current);  initialDelayRef.current = null }
+  }
+
+  // ── Core status check ─────────────────────────────────────────
+  // Called by BOTH Pusher and the polling interval.
+  // Receives `tid` as a parameter rather than reading from state,
+  // so it always has the correct value regardless of closure age.
+
+  async function checkTransferStatus(tid: string) {
+    if (isTerminalRef.current) return  // already resolved — ignore
+
+    try {
+      const { data: tData } = await api.get(`/cybrid/transfer/${tid}`);
+      const s = tData.data;
+
+      if (s.status === "funding_initiated") {
+        setTransferStatus("Pulling funds from your bank...");
+
+      } else if (s.status === "book_initiated") {
+        setTransferStatus("Moving funds to StableSend...");
+
+      } else if (s.status === "completed") {
+        isTerminalRef.current = true
+        stopPolling()
+        setTransferStatus("completed");
+        setStep("success");
+
+      } else if (s.status === "failed") {
+        isTerminalRef.current = true
+        stopPolling()
+        setErrorMessage("Transfer failed. Please try again or contact support.");
+        setStep("error");
+      }
+      // Any other state (storing, pending, reviewing) — keep polling
+    } catch {
+      // Network error — keep polling, don't treat as failure
+    }
+  }
+
+  // ── Polling: first check after 20s, then every 20s ───────────
+  //
+  // Timeline:
+  //   t=0s   — POST /cybrid/send fires, startPolling(tid) called
+  //   t=0–20s — Pusher is the only active path (fast, real-time)
+  //   t=20s  — first poll fires (setTimeout expires)
+  //   t=40s  — second poll (setInterval tick)
+  //   t=60s  — third poll ... and so on
+  //
+  // If Pusher resolves the transfer at t=5s, stopPolling() is called
+  // and neither the timeout nor the interval ever fires.
+
+  function startPolling(tid: string) {
+    // setTimeout for the initial 20s delay — NOT setInterval
+    // setInterval(fn, 20000) would fire at t=20, 40, 60 — missing t=0.
+    // setTimeout fires once at t=20, then we start the repeating interval.
+    initialDelayRef.current = setTimeout(() => {
+      // First poll at t=20s
+      checkTransferStatus(tid)
+
+      // Then repeat every 20s from here
+      transferPollRef.current = setInterval(() => {
+        console.log("[poll] checking transfer status", tid)
+        checkTransferStatus(tid)
+      }, 20_000)
+    }, 20_000)
+  }
+
+  // ── Send ──────────────────────────────────────────────────────
+
+  async function handleSend(totpCode?: string) {
     setStep("processing");
     setTransferStatus("Initiating transfer...");
+    isTerminalRef.current = false  // reset in case user retries
 
     try {
       const { data } = await api.post("/cybrid/send", {
         amount,
-        bankAccountGuid:selectedBankAccount?.guid,
         recipientId,
-      },{ idempotent: true });
+        ...(totpCode ? { totpCode } : {}),
+      });
 
+      const tid: string = data.data.transferId
 
+      // Store in ref SYNCHRONOUSLY — any closure created after this
+      // line will read the correct tid immediately
+      transactionIdRef.current = tid
 
-      const tid = data.data.transferId;
       setTransferStatus("Funding in progress...");
+      startPolling(tid)
 
-      transferPollRef.current = setInterval(async () => {
-        try {
-          const { data: tData } = await api.get(`/cybrid/transfer/${tid}`);
-          const s = tData.data;
-
-          if (s.status === "funding_initiated") {
-            setTransferStatus("Pulling funds from your bank...");
-          } else if (s.status === "book_initiated") {
-            setTransferStatus("Moving funds to StableSend...");
-          } else if (s.status === "completed") {
-            if (transferPollRef.current) clearInterval(transferPollRef.current);
-            setTransferStatus("completed");
-            setStep("success");
-          } else if (s.status === "failed") {
-            if (transferPollRef.current) clearInterval(transferPollRef.current);
-            setErrorMessage("Transfer failed. Please try again or contact support.");
-            setStep("error");
-          }
-        } catch {
-          // Keep polling
-        }
-      }, 4000);
     } catch (err: any) {
-      const msg = err.response?.data?.message || "Failed to initiate transfer.";
-      const isUnverified =
-        typeof msg === "string" && msg.toLowerCase().includes("not yet verified");
-      const isNoBankAccount =
-        typeof msg === "string" &&
-        (msg.toLowerCase().includes("no linked bank") ||
-          msg.toLowerCase().includes("no linked bank account"));
+      const msg   = err.response?.data?.message || "Failed to initiate transfer.";
+      const lower = msg.toLowerCase();
 
-      if (isUnverified || isNoBankAccount) {
-        // Send them back to verify to re-link / re-verify bank
-        navigate({ to: "/send/$recipientId/verify/kyc", params: { recipientId } });
+      if (lower.includes("not yet verified") || lower.includes("no linked bank")) {
+        navigate({ to: "/send/$recipientId/verify", params: { recipientId } });
       } else {
         setErrorMessage(msg);
         setStep("error");
       }
     }
   }
+
+  // ── Pusher: instant path ──────────────────────────────────────
+  //
+  // When the Cybrid webhook fires and the backend triggers
+  // 'transfer.updated' on the user's private Pusher channel,
+  // this handler fires immediately.
+  //
+  // We read transactionIdRef.current (not state) so we always
+  // have the latest tid even if this callback was created before
+  // the state update ran.
+  //
+  // We re-query the server rather than trusting the Pusher payload
+  // directly — Pusher payloads can be partial; the server is
+  // the source of truth.
+
+  usePusherEvent("transfer.updated", (data) => {
+    const tid = transactionIdRef.current
+toast.warning('Checking status')
+    // No transfer started yet — ignore (shouldn't happen in practice)
+    if (!tid) return
+
+    // Event is for a different transfer — ignore
+    // (e.g. a previous send from the same session that's still settling)
+    if (data?.transferId && String(data.transferId) !== String(tid)) return
+
+    // Re-query for authoritative state
+    checkTransferStatus(tid)
+
+
+  })
+
+  // ── Navigation helpers ────────────────────────────────────────
 
   function sendAgain() {
     navigate({ to: "/send/$recipientId/amount", params: { recipientId } });
@@ -118,9 +223,12 @@ function RouteComponent() {
     navigate({ to: "/dashboard" });
   }
 
+  // ── Render ────────────────────────────────────────────────────
+
   return (
     <AnimatePresence mode="wait">
-      {/* Review */}
+
+      {/* ── Review ── */}
       {step === "review" && (
         <motion.div
           key="review"
@@ -138,7 +246,6 @@ function RouteComponent() {
             </p>
           </div>
 
-          {/* Hero amount card */}
           <Card className="p-4 sm:p-5 bg-gradient-to-br from-blue-600 to-blue-800 dark:from-blue-700 dark:to-blue-900 text-white mb-4 border-0 shadow-lg">
             <div className="text-center">
               <div className="text-xs text-blue-100 mb-1">You are sending</div>
@@ -149,8 +256,7 @@ function RouteComponent() {
             </div>
           </Card>
 
-          {/* Transfer breakdown */}
-          <Card className="p-4 mb-4 dark:bg-slate-800 dark:border-slate-700">
+          <Card className="p-4 mb-4 dark:bg-slate-800 dark:border-slate-700 border-slate-300">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3">
               Transfer Details
             </h3>
@@ -198,21 +304,25 @@ function RouteComponent() {
                   search: { amount },
                 })
               }
-              className="h-12 px-5 dark:border-slate-700 dark:hover:bg-slate-800 border-2"
+              className="h-12 px-5 dark:border-slate-700 border-slate-300 dark:hover:bg-slate-800 border-2"
             >
               <ArrowLeft className="w-4 h-4" />
             </Button>
-            <Button
-              className="flex-1 h-12 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-base font-semibold shadow-lg"
-              onClick={handleSend}
-            >
-              Confirm &amp; Send <CheckCircle2 className="w-5 h-5 ml-2" />
-            </Button>
+            <TotpGate onConfirm={handleSend}>
+              {(trigger) => (
+                <Button
+                  className="flex-1 h-12 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-base font-semibold shadow-lg"
+                  onClick={trigger}
+                >
+                  Confirm &amp; Send <CheckCircle2 className="w-5 h-5 ml-2" />
+                </Button>
+              )}
+            </TotpGate>
           </div>
         </motion.div>
       )}
 
-      {/* Processing */}
+      {/* ── Processing ── */}
       {step === "processing" && (
         <motion.div
           key="processing"
@@ -231,7 +341,7 @@ function RouteComponent() {
             {transferStatus}
           </p>
 
-          <Card className="p-4 w-full max-w-sm bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
+          <Card className="p-4 w-full max-w-sm bg-slate-50 dark:bg-slate-800 dark:border-slate-700 border-slate-300">
             <div className="space-y-3">
               <TransferStepIndicator
                 label="Initiating transfer"
@@ -244,10 +354,7 @@ function RouteComponent() {
               />
               <TransferStepIndicator
                 label="Pulling funds from your bank"
-                done={[
-                  "Moving funds to StableSend...",
-                  "completed",
-                ].includes(transferStatus)}
+                done={["Moving funds to StableSend...", "completed"].includes(transferStatus)}
                 active={transferStatus === "Pulling funds from your bank..."}
               />
               <TransferStepIndicator
@@ -260,7 +367,7 @@ function RouteComponent() {
         </motion.div>
       )}
 
-      {/* Success */}
+      {/* ── Success ── */}
       {step === "success" && (
         <motion.div
           key="success"
@@ -296,7 +403,7 @@ function RouteComponent() {
             <Button
               variant="outline"
               onClick={goToDashboard}
-              className="flex-1 h-11 dark:border-slate-700 dark:hover:bg-slate-800"
+              className="flex-1 h-11 dark:border-slate-700 dark:hover:bg-slate-800 border-slate-300"
             >
               Go to Dashboard
             </Button>
@@ -304,7 +411,7 @@ function RouteComponent() {
         </motion.div>
       )}
 
-      {/* Error */}
+      {/* ── Error ── */}
       {step === "error" && (
         <motion.div
           key="error"
@@ -326,15 +433,12 @@ function RouteComponent() {
             <Button
               variant="outline"
               onClick={() => setStep("review")}
-              className="h-11 px-6 dark:border-slate-700 dark:hover:bg-slate-800 border-2"
+              className="h-11 px-6 dark:border-slate-700 dark:hover:bg-slate-800 border-2 border-slate-300"
             >
               <ArrowLeft className="w-4 h-4 mr-2" /> Back
             </Button>
             <Button
-              onClick={() => {
-                setErrorMessage("");
-                setStep("review");
-              }}
+              onClick={() => { setErrorMessage(""); setStep("review"); }}
               className="bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 h-11 px-8"
             >
               Try Again
@@ -342,11 +446,10 @@ function RouteComponent() {
           </div>
         </motion.div>
       )}
+
     </AnimatePresence>
   );
 }
-
-// ── Sub-component ──
 
 function TransferStepIndicator({
   label,
@@ -367,12 +470,13 @@ function TransferStepIndicator({
         <div className="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 flex-shrink-0" />
       )}
       <span
-        className={`text-sm ${done
+        className={`text-sm ${
+          done
             ? "text-emerald-600 dark:text-emerald-400 font-medium"
             : active
               ? "text-blue-600 dark:text-blue-400 font-medium"
               : "text-slate-400 dark:text-slate-500"
-          }`}
+        }`}
       >
         {label}
       </span>

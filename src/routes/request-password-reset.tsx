@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { SignIn } from '../components/SignIn';
-import { RequestPasswordReset } from '@/components/forms/request_password_reset';
+import { SignIn } from '../components/authentication/SignIn';
+import { RequestPasswordReset } from '@/components/authentication/request_password_reset';
 
 export const Route = createFileRoute('/request-password-reset')({
   component: SignInRoute,

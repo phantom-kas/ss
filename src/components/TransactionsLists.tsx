@@ -124,7 +124,7 @@ function TransactionCard({
   return (
     <Card
       onClick={onClick}
-      className="p-4 dark:bg-slate-800 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 active:bg-slate-50 transition-colors cursor-pointer"
+      className="p-4 dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 active:bg-slate-50 transition-colors cursor-pointer"
     >
       <div className="flex items-start gap-3">
         <Avatar className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
@@ -250,8 +250,8 @@ export function Transactions() {
             tx={tx}
             onClick={() =>
               navigate({
-                to: '/transactions/$remittanceId',
-                params: { remittanceId: tx.remittanceId },
+                to: '/transactions/$transactionId',
+                params: { transactionId: tx.remittanceId },
               })
             }
           />

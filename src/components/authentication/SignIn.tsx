@@ -1,19 +1,21 @@
 import { useState } from 'react';
 import { Star, Eye, EyeOff, Mail, Lock, ArrowLeft } from 'lucide-react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Card } from './ui/card';
-import type { Page } from '../App';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Card } from '../ui/card';
+import type { Page } from '../../App';
 import logo from 'figma:asset/872c19024a848c86be2cfb9320e9ce2d33228284.png';
 import { Link, useNavigate } from '@tanstack/react-router';
 import axios from 'axios';
 import { showError } from '@/lib/error';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
-import { LoadingButton } from './Elements/Button';
+import { LoadingButton } from '../Elements/Button';
 import { authActions, useAuthStore } from '@/stores/auth';
-import { GoogleSignInButton } from './Elements/GoogleAuth';
+import { GoogleSignInButton } from '../Elements/GoogleAuth';
+import AuthContainer from './AuthContainer';
+import { usePusherStore } from '@/stores/pusher';
 
 interface SignInProps {
   navigateTo: (page: Page) => void;
@@ -73,6 +75,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     }
 
     // Full login
+    usePusherStore.getState().connect(data.public_id, accessToken)
     authActions.login(data, accessToken)
 
     if (!data.done_onboarding) {
@@ -100,7 +103,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-slate-400" />
       </button>
 
-      <Card className="w-full max-w-md p-6 shadow-xl dark:bg-slate-800 dark:border-slate-700">
+      <AuthContainer>
         <div className="text-center mb-6">
           <div className="flex items-center justify-center mb-3">
             <img src={logo} alt="StableSend" className="h-11 sm:h-12" />
@@ -190,7 +193,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             Sign up
           </Link>
         </p>
-      </Card>
+      </AuthContainer>
     </div>
   );
 }

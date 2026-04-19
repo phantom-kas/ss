@@ -3,6 +3,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { AuthLayout } from "./Authlayout"
 import { LoadingButton } from "./Elements/Button"
 import { FieldGroup } from "./ui/field"
+import AuthContainer from "./authentication/AuthContainer"
 
 interface TotpPageProps {
   title?: string
@@ -55,6 +56,7 @@ export function TotpPage({
   return (
     <AuthLayout showBack={showBack} title={title} subtitle={subtitle}>
       <form onSubmit={handleSubmit}>
+       
         <FieldGroup className="flex flex-col items-center gap-4">
           <InputOTP
             maxLength={6}
@@ -100,6 +102,7 @@ export function TotpPage({
             </button>
           )}
         </FieldGroup>
+       
       </form>
     </AuthLayout>
   )

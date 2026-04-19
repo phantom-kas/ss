@@ -10,6 +10,7 @@ import api from '@/lib/axios';
 import { showError } from '@/lib/error';
 import { toast } from 'sonner';
 import { LoadingButton } from '../Elements/Button';
+import AuthContainer from './AuthContainer';
 
 interface RequestPasswordResetProps {
   navigateTo: (page: string) => void;
@@ -51,7 +52,7 @@ export function RequestPasswordReset() {
         <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-slate-400" />
       </button>
 
-      <Card className="w-full max-w-md p-6 shadow-xl dark:bg-slate-800 dark:border-slate-700">
+      <AuthContainer>
         <div className="text-center mb-6">
           <div className="flex items-center justify-center mb-3">
             <img src={logo} alt="StableSend" className="h-11 sm:h-12" />
@@ -99,7 +100,7 @@ export function RequestPasswordReset() {
             Sign in
           </Button>
         </p>
-      </Card>
+      </AuthContainer>
     </div>
   );
 }
