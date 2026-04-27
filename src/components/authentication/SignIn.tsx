@@ -16,6 +16,7 @@ import { authActions, useAuthStore } from '@/stores/auth';
 import { GoogleSignInButton } from '../Elements/GoogleAuth';
 import AuthContainer from './AuthContainer';
 import { usePusherStore } from '@/stores/pusher';
+import { collectDeviceHints } from '@/lib/deviceInfo';
 
 interface SignInProps {
   navigateTo: (page: Page) => void;
@@ -64,7 +65,8 @@ const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault()
   try {
     setLoading(true)
-    const res = await api.post('/auth/login', formData)
+     const deviceHints = await collectDeviceHints(); 
+    const res = await api.post('/auth/login', {...formData,deviceHints})
     const { data, accessToken } = res.data
 
     // TOTP required — store partial token and redirect to challenge

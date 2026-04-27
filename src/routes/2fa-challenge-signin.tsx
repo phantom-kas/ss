@@ -9,6 +9,7 @@ import { showError } from '@/lib/error'
 import axios from 'axios'
 import { toast } from 'sonner'
 import { usePusherStore } from '@/stores/pusher'
+import { collectDeviceHints } from '@/lib/deviceInfo'
 
 export const Route = createFileRoute('/2fa-challenge-signin')({
   component: RouteComponent,
@@ -34,9 +35,11 @@ function LoginTotpChallenge() {
   setIsLoading(true)
   setError('')
   try {
+
+    const deviceHints = await collectDeviceHints(); 
     const res = await axios.post(
       api.defaults.baseURL + '/2fa/verify-login',
-      { code },
+      { code,deviceHints },
       { headers: { Authorization: `Bearer ${partialToken}` } }
     )
 

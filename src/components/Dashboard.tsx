@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 import { showError } from '@/lib/error';
 import api from '@/lib/axios';
 import { useNavigate } from '@tanstack/react-router';
+import { UserStatsChart } from './UserStatsChart';
 
 interface DashboardProps {
   navigateTo: (page: Page) => void;
@@ -128,6 +129,7 @@ export function Dashboard({ navigateTo, onLogout }: DashboardProps) {
 
     <main className="max-w-2xl mx-auto px-3 sm:px-6 py-3 sm:py-6 pb-20 md:pb-6">
       {/* Header */}
+
       <div className="mb-3 sm:mb-4">
         <h1 className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white">Hi, John 👋</h1>
         <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Send money to Ghana instantly</p>
@@ -187,6 +189,7 @@ export function Dashboard({ navigateTo, onLogout }: DashboardProps) {
         </div>
       </Card>
 
+<UserStatsChart />
 
 
       <RecentRecipientsHome onSelect={(a)=>{navigate2({to:'/send',search:{recipient_id:a.id}})}} onClickAdd={()=>{setMode('other');setOpen(true)}} deliveryMethod={undefined} 
