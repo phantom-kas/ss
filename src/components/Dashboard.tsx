@@ -135,7 +135,6 @@ export function Dashboard({ navigateTo, onLogout }: DashboardProps) {
         <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Send money to Ghana instantly</p>
       </div>
 
-<UserStatsChart />
       {/* Quick Actions Card */}
       <Card className="p-4 bg-gradient-to-br from-blue-600 to-blue-800 dark:from-blue-700 dark:to-blue-900 text-white border-0 shadow-lg mb-3">
         <p className="text-xs text-blue-100 mb-2">Quick Actions</p>
@@ -190,6 +189,7 @@ export function Dashboard({ navigateTo, onLogout }: DashboardProps) {
         </div>
       </Card>
 
+<UserStatsChart />
 
 
       <RecentRecipientsHome onSelect={(a)=>{navigate2({to:'/send',search:{recipient_id:a.id}})}} onClickAdd={()=>{setMode('other');setOpen(true)}} deliveryMethod={undefined} 

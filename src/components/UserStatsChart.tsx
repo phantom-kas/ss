@@ -10,7 +10,7 @@
  *   <UserStatsChart />
  */
 
-// import { StatsChart } from './StatsChart'
+import { StatsChart } from './StatsChart'
 
 export function UserStatsChart() {
   return (
